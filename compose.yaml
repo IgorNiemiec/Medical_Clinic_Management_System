@@ -1,9 +1,16 @@
 services:
   postgres:
     image: 'postgres:latest'
+    container_name: clinic_postgres
+    restart: always
     environment:
-      - 'POSTGRES_DB=mydatabase'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+      POSTGRES_DB: clinicdb
+      POSTGRES_USER: clinic_user
+      POSTGRES_PASSWORD: clinic_pass
     ports:
-      - '5432'
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
