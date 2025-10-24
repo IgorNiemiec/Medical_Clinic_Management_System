@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="Specialization")
+@Table(name="specialization")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
