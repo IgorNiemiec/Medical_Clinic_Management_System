@@ -51,3 +51,5 @@ The project is built using the following core technologies (assuming typical Jav
 * **Appointment** Stores appointment details: date, time, service type, status (scheduled/completed/canceled), description, and links to Patient, MedicalStaff, ExaminationRoom, and Receptionist.
 
 * **Payment** Records payment for appointments, with data on amount, payment method, status, unique transaction number, and link to the specific Appointment.
+
+
