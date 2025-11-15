@@ -1,5 +1,6 @@
 package org.example.medical_clinic_management_system.controller.payment;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.medical_clinic_management_system.dto.payment.PaymentDto;
 import org.example.medical_clinic_management_system.service.payment.PaymentService;
@@ -28,7 +29,7 @@ public class PaymentController
     }
 
     @PostMapping
-    public ResponseEntity<PaymentDto> create(@RequestBody PaymentDto dto) {
+    public ResponseEntity<PaymentDto> create(@Valid @RequestBody PaymentDto dto) {
         PaymentDto saved = service.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }

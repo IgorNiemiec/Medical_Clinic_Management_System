@@ -1,5 +1,6 @@
 package org.example.medical_clinic_management_system.controller.person;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.medical_clinic_management_system.dto.person.UserDto;
 import org.example.medical_clinic_management_system.service.person.UserService;
@@ -28,7 +29,7 @@ public class UserController
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> create(@RequestBody UserDto dto) {
+    public ResponseEntity<UserDto> create(@Valid @RequestBody UserDto dto) {
         UserDto saved = service.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }

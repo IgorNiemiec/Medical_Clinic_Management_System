@@ -1,5 +1,6 @@
 package org.example.medical_clinic_management_system.controller.schedule;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.medical_clinic_management_system.dto.schedule.EmployeeScheduleDto;
 import org.example.medical_clinic_management_system.service.schedule.EmployeeScheduleService;
@@ -28,7 +29,7 @@ public class EmployeeScheduleController
     }
 
     @PostMapping
-    public ResponseEntity<EmployeeScheduleDto> create(@RequestBody EmployeeScheduleDto dto) {
+    public ResponseEntity<EmployeeScheduleDto> create(@Valid @RequestBody EmployeeScheduleDto dto) {
         EmployeeScheduleDto saved = service.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }

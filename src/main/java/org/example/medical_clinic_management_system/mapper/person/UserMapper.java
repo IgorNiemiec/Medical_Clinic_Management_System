@@ -14,7 +14,7 @@ public class UserMapper
         dto.setFirstName(entity.getFirstName());
         dto.setSurname(entity.getSurname());
         dto.setEmail(entity.getEmail());
-        dto.setPassword(entity.getPassword()); // Możesz pominąć w widoku publicznym
+        dto.setPassword(entity.getPassword());
         dto.setRole(entity.getRole());
         dto.setRegisterDate(entity.getRegisterDate());
         dto.setLastLogin(entity.getLastLogin());

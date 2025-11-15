@@ -36,8 +36,9 @@ public class NotificationService
     }
 
     public NotificationDto create(NotificationDto dto) {
-        User user = userRepository.findById(dto.getUserId())
+        User user = userRepository.findById((dto.getUserId()))
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
         Notification entity = mapper.toEntity(dto, user);
         return mapper.toDto(notificationRepository.save(entity));
     }

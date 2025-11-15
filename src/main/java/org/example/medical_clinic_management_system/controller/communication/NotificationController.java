@@ -1,5 +1,6 @@
 package org.example.medical_clinic_management_system.controller.communication;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.medical_clinic_management_system.dto.communication.NotificationDto;
 import org.example.medical_clinic_management_system.service.communication.NotificationService;
@@ -28,7 +29,7 @@ public class NotificationController
     }
 
     @PostMapping
-    public ResponseEntity<NotificationDto> create(@RequestBody NotificationDto dto) {
+    public ResponseEntity<NotificationDto> create(@Valid @RequestBody NotificationDto dto) {
         NotificationDto saved = notificationService.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }

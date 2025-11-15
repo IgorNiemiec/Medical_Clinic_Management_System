@@ -1,6 +1,7 @@
 package org.example.medical_clinic_management_system.controller.service;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.medical_clinic_management_system.dto.service.MedicalServiceDto;
 import org.example.medical_clinic_management_system.service.service.MedicalServiceService;
@@ -30,7 +31,7 @@ public class MedicalServiceController
     }
 
         @PostMapping
-        public ResponseEntity<MedicalServiceDto> create(@RequestBody MedicalServiceDto dto) {
+        public ResponseEntity<MedicalServiceDto> create(@Valid @RequestBody MedicalServiceDto dto) {
         return ResponseEntity.ok(medicalServiceService.create(dto));
     }
 

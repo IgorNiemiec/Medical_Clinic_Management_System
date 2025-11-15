@@ -1,5 +1,6 @@
 package org.example.medical_clinic_management_system.controller.schedule;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.medical_clinic_management_system.dto.schedule.WaitingListDto;
 import org.example.medical_clinic_management_system.service.schedule.WaitingListService;
@@ -28,7 +29,7 @@ public class WaitingListController
     }
 
     @PostMapping
-    public ResponseEntity<WaitingListDto> create(@RequestBody WaitingListDto dto) {
+    public ResponseEntity<WaitingListDto> create(@Valid @RequestBody WaitingListDto dto) {
         WaitingListDto saved = service.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
