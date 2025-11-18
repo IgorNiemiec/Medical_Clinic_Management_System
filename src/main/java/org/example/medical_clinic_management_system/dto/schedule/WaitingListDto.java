@@ -8,19 +8,18 @@ import org.example.medical_clinic_management_system.model.schedule.WaitingList.S
 import java.time.LocalDateTime;
 
 @Data
-public class WaitingListDto
-{
+public class WaitingListDto {
     private Long id;
 
-    @NotNull(message = "Patient ID cannot be null")
+    @NotNull(message = "{validation.waitingList.patientId.notNull}")
     private Long patientId;
 
-    @NotNull(message = "Added date is required")
+    @NotNull(message = "{validation.waitingList.addedAt.notNull}")
     private LocalDateTime addedAt;
 
-    @NotNull(message = "Priority is required")
+    @NotNull(message = "{validation.waitingList.priority.notNull}")
     private Priority priority;
 
-    @NotNull(message = "Status is required")
+    @NotNull(message = "{validation.waitingList.status.notNull}")
     private Status status;
 }

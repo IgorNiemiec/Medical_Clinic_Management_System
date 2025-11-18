@@ -8,24 +8,23 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-public class PrescriptionDto
-{
+public class PrescriptionDto {
     private Long id;
 
-    @NotNull(message = "Appointment ID cannot be null")
+    @NotNull(message = "{validation.prescription.appointmentId.notNull}")
     private Long appointmentId;
 
-    @NotNull(message = "Patient ID cannot be null")
+    @NotNull(message = "{validation.prescription.patientId.notNull}")
     private Long patientId;
 
-    @NotNull(message = "Doctor ID cannot be null")
+    @NotNull(message = "{validation.prescription.doctorId.notNull}")
     private Long doctorId;
 
-    @NotNull(message = "Issued date is required")
-    @PastOrPresent(message = "Issued date cannot be in the future")
+    @NotNull(message = "{validation.prescription.issuedDate.notNull}")
+    @PastOrPresent(message = "{validation.prescription.issuedDate.pastOrPresent}")
     private LocalDate issuedDate;
 
-    @NotBlank(message = "Recommendations cannot be blank")
-    @Size(min = 5, max = 2000, message = "Recommendations must be between 5 and 2000 characters")
+    @NotBlank(message = "{validation.prescription.recommendations.notBlank}")
+    @Size(min = 5, max = 2000, message = "{validation.prescription.recommendations.size}")
     private String recommendations;
 }

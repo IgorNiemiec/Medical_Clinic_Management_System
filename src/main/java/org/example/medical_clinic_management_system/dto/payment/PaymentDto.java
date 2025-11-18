@@ -9,27 +9,26 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-public class PaymentDto
-{
+public class PaymentDto {
     private Long id;
 
-    @NotNull(message = "Appointment ID cannot be null")
+    @NotNull(message = "{validation.payment.appointmentId.notNull}")
     private Long appointmentId;
 
-    @NotNull(message = "Amount is required")
-    @DecimalMin(value = "0.01", inclusive = true, message = "Amount must be greater than 0")
+    @NotNull(message = "{validation.payment.amount.notNull}")
+    @DecimalMin(value = "0.01", inclusive = true, message = "{validation.payment.amount.min}")
     private BigDecimal amount;
 
-    @NotNull(message = "Payment date is required")
+    @NotNull(message = "{validation.payment.date.notNull}")
     private LocalDateTime date;
 
-    @NotNull(message = "Payment method is required")
+    @NotNull(message = "{validation.payment.paymentMethod.notNull}")
     private PaymentMethod paymentMethod;
 
-    @NotNull(message = "Status is required")
+    @NotNull(message = "{validation.payment.status.notNull}")
     private Status status;
 
-    @NotBlank(message = "Transaction number cannot be blank")
-    @Size(min = 5, max = 50, message = "Transaction number must be between 5 and 50 characters")
+    @NotBlank(message = "{validation.payment.transactionNumber.notBlank}")
+    @Size(min = 5, max = 50, message = "{validation.payment.transactionNumber.size}")
     private String transactionNumber;
 }

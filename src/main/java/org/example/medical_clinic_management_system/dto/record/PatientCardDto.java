@@ -2,25 +2,23 @@ package org.example.medical_clinic_management_system.dto.record;
 
 import lombok.Data;
 import jakarta.validation.constraints.*;
-
 import java.time.LocalDate;
 
 @Data
-public class PatientCardDto
-{
+public class PatientCardDto {
     private Long id;
 
-    @NotNull(message = "Patient ID cannot be null")
+    @NotNull(message = "{validation.patientCard.patientId.notNull}")
     private Long patientId;
 
-    @NotNull(message = "Creation date is required")
-    @PastOrPresent(message = "Creation date cannot be in the future")
+    @NotNull(message = "{validation.patientCard.createdAt.notNull}")
+    @PastOrPresent(message = "{validation.patientCard.createdAt.pastOrPresent}")
     private LocalDate createdAt;
 
-    @NotBlank(message = "Medical history cannot be blank")
-    @Size(min = 5, max = 2000, message = "Medical history must be between 5 and 2000 characters")
+    @NotBlank(message = "{validation.patientCard.medicalHistory.notBlank}")
+    @Size(min = 5, max = 2000, message = "{validation.patientCard.medicalHistory.size}")
     private String medicalHistory;
 
-    @Size(max = 1000, message = "Allergies description cannot exceed 1000 characters")
+    @Size(max = 1000, message = "{validation.patientCard.allergies.size}")
     private String allergies;
 }

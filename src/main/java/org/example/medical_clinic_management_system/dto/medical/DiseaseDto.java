@@ -1,23 +1,20 @@
 package org.example.medical_clinic_management_system.dto.medical;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
 import lombok.Data;
 
 @Data
-public class DiseaseDto
-{
+public class DiseaseDto {
     private Long id;
 
-    @NotBlank(message = "Disease name cannot be blank")
-    @Size(min = 2, max = 100, message = "Disease name must be between 2 and 100 characters")
+    @NotBlank(message = "{validation.disease.name.notBlank}")
+    @Size(min = 2, max = 100, message = "{validation.disease.name.size}")
     private String name;
 
-    @Size(max = 1000, message = "Description cannot exceed 1000 characters")
+    @Size(max = 1000, message = "{validation.disease.description.size}")
     private String description;
 
-    @Size(min = 3, max = 10, message = "ICD code must be between 3 and 10 characters")
+    @Size(min = 3, max = 10, message = "{validation.disease.icdCode.size}")
     private String icdCode;
 }

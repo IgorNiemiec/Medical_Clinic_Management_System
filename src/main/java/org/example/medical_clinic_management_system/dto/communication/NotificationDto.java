@@ -8,28 +8,24 @@ import jakarta.validation.constraints.Size;
 import org.example.medical_clinic_management_system.model.communication.Notification.Status;
 import org.example.medical_clinic_management_system.model.communication.Notification.Type;
 
-
 import java.time.LocalDate;
 
-
-
 @Data
-public class NotificationDto
-{
+public class NotificationDto {
     private Long id;
 
-    @NotNull(message = "User ID cannot be null")
+    @NotNull(message = "{validation.notification.userId.notNull}")
     private Long userId;
 
-    @NotNull(message = "Type is required")
+    @NotNull(message = "{validation.notification.type.notNull}")
     private Type type;
 
-    @NotBlank(message = "Content cannot be blank")
-    @Size(min = 5, max = 500, message = "Content must be between 5 and 500 characters")
+    @NotBlank(message = "{validation.notification.content.notBlank}")
+    @Size(min = 5, max = 500, message = "{validation.notification.content.size}")
     private String content;
 
     private LocalDate date;
 
-    @NotNull(message = "Status is required")
+    @NotNull(message = "{validation.notification.status.notNull}")
     private Status status;
 }

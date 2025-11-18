@@ -9,25 +9,24 @@ import org.example.medical_clinic_management_system.model.medical.MedicalEquipme
 import org.example.medical_clinic_management_system.model.medical.MedicalEquipment.Type;
 
 @Data
-public class MedicalEquipmentDto
-{
+public class MedicalEquipmentDto {
     private Long id;
 
-    @NotBlank(message = "Equipment name cannot be blank")
-    @Size(min = 2, max = 100, message = "Equipment name must be between 2 and 100 characters")
+    @NotBlank(message = "{validation.medicalEquipment.name.notBlank}")
+    @Size(min = 2, max = 100, message = "{validation.medicalEquipment.name.size}")
     private String name;
 
-    @NotNull(message = "Equipment type is required")
+    @NotNull(message = "{validation.medicalEquipment.type.notNull}")
     private Type type;
 
-    @NotNull(message = "Quantity is required")
-    @Min(value = 1, message = "Quantity must be at least 1")
+    @NotNull(message = "{validation.medicalEquipment.quantity.notNull}")
+    @Min(value = 1, message = "{validation.medicalEquipment.quantity.min}")
     private Integer quantity;
 
-    @NotBlank(message = "Location cannot be blank")
-    @Size(max = 255, message = "Location cannot exceed 255 characters")
+    @NotBlank(message = "{validation.medicalEquipment.location.notBlank}")
+    @Size(max = 255, message = "{validation.medicalEquipment.location.size}")
     private String location;
 
-    @NotNull(message = "Status is required")
+    @NotNull(message = "{validation.medicalEquipment.status.notNull}")
     private Status status;
 }

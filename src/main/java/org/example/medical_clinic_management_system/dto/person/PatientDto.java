@@ -7,29 +7,28 @@ import org.example.medical_clinic_management_system.model.person.Patient.Gender;
 import java.time.LocalDate;
 
 @Data
-public class PatientDto
-{
+public class PatientDto {
     private Long id;
 
-    @NotNull(message = "User ID cannot be null")
+    @NotNull(message = "{validation.patient.userId.notNull}")
     private Long userId;
 
-    @NotNull(message = "Date of birth is required")
-    @Past(message = "Date of birth must be in the past")
+    @NotNull(message = "{validation.patient.dateOfBirth.notNull}")
+    @Past(message = "{validation.patient.dateOfBirth.past}")
     private LocalDate dateOfBirth;
 
-    @NotBlank(message = "Address cannot be blank")
-    @Size(min = 5, max = 255, message = "Address must be between 5 and 255 characters")
+    @NotBlank(message = "{validation.patient.address.notBlank}")
+    @Size(min = 5, max = 255, message = "{validation.patient.address.size}")
     private String address;
 
-    @NotBlank(message = "Phone number cannot be blank")
-    @Pattern(regexp = "^[0-9\\-+]{9,15}$", message = "Phone number must be valid (9–15 digits)")
+    @NotBlank(message = "{validation.patient.phone.notBlank}")
+    @Pattern(regexp = "^[0-9\\-+]{9,15}$", message = "{validation.patient.phone.pattern}")
     private String phone;
 
-    @NotBlank(message = "PESEL cannot be blank")
-    @Pattern(regexp = "^[0-9]{11}$", message = "PESEL must be exactly 11 digits")
+    @NotBlank(message = "{validation.patient.pesel.notBlank}")
+    @Pattern(regexp = "^[0-9]{11}$", message = "{validation.patient.pesel.pattern}")
     private String pesel;
 
-    @NotNull(message = "Gender is required")
+    @NotNull(message = "{validation.patient.gender.notNull}")
     private Gender gender;
 }

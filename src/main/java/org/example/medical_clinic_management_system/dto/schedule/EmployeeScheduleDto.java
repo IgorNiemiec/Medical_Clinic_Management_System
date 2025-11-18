@@ -7,17 +7,16 @@ import org.example.medical_clinic_management_system.model.schedule.EmployeeSched
 import java.time.LocalDate;
 
 @Data
-public class EmployeeScheduleDto
-{
+public class EmployeeScheduleDto {
     private Long id;
 
-    @NotNull(message = "Employee ID cannot be null")
+    @NotNull(message = "{validation.employeeSchedule.employeeId.notNull}")
     private Long employeeId;
 
-    @NotNull(message = "Schedule date is required")
-    @FutureOrPresent(message = "Schedule date cannot be in the past")
+    @NotNull(message = "{validation.employeeSchedule.date.notNull}")
+    @FutureOrPresent(message = "{validation.employeeSchedule.date.futureOrPresent}")
     private LocalDate date;
 
-    @NotNull(message = "Schedule type is required")
+    @NotNull(message = "{validation.employeeSchedule.type.notNull}")
     private ScheduleType type;
 }

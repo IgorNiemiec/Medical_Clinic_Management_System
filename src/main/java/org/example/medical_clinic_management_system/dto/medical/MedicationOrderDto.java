@@ -8,28 +8,27 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
-public class MedicationOrderDto
-{
+public class MedicationOrderDto {
     private Long id;
 
-    @NotNull(message = "Product ID cannot be null")
+    @NotNull(message = "{validation.medicationOrder.productId.notNull}")
     private Long productId;
 
-    @NotNull(message = "Order date is required")
+    @NotNull(message = "{validation.medicationOrder.date.notNull}")
     private LocalDate date;
 
-    @NotNull(message = "Quantity is required")
-    @Min(value = 1, message = "Quantity must be at least 1")
+    @NotNull(message = "{validation.medicationOrder.quantity.notNull}")
+    @Min(value = 1, message = "{validation.medicationOrder.quantity.min}")
     private Integer quantity;
 
-    @NotNull(message = "Status is required")
+    @NotNull(message = "{validation.medicationOrder.status.notNull}")
     private Status status;
 
-    @NotBlank(message = "Supplier cannot be blank")
-    @Size(min = 2, max = 100, message = "Supplier name must be between 2 and 100 characters")
+    @NotBlank(message = "{validation.medicationOrder.supplier.notBlank}")
+    @Size(min = 2, max = 100, message = "{validation.medicationOrder.supplier.size}")
     private String supplier;
 
-    @NotNull(message = "Price is required")
-    @DecimalMin(value = "0.01", inclusive = true, message = "Price must be greater than 0")
+    @NotNull(message = "{validation.medicationOrder.price.notNull}")
+    @DecimalMin(value = "0.01", inclusive = true, message = "{validation.medicationOrder.price.min}")
     private BigDecimal price;
 }

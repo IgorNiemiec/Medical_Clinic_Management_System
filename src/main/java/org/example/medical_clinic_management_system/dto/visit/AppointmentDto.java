@@ -10,36 +10,35 @@ import java.time.LocalTime;
 
 @Data
 @Builder
-public class AppointmentDto
-{
+public class AppointmentDto {
     private Long id;
 
-    @NotNull(message = "Receptionist ID cannot be null")
+    @NotNull(message = "{validation.appointment.receptionistId.notNull}")
     private Long receptionistId;
 
-    @NotNull(message = "Patient ID cannot be null")
+    @NotNull(message = "{validation.appointment.patientId.notNull}")
     private Long patientId;
 
-    @NotNull(message = "Medical staff ID cannot be null")
+    @NotNull(message = "{validation.appointment.medicalStaffId.notNull}")
     private Long medicalStaffId;
 
-    @NotNull(message = "Room ID cannot be null")
+    @NotNull(message = "{validation.appointment.roomId.notNull}")
     private Long roomId;
 
-    @NotNull(message = "Appointment date is required")
-    @FutureOrPresent(message = "Appointment date cannot be in the past")
+    @NotNull(message = "{validation.appointment.date.notNull}")
+    @FutureOrPresent(message = "{validation.appointment.date.futureOrPresent}")
     private LocalDate date;
 
-    @NotNull(message = "Appointment time is required")
+    @NotNull(message = "{validation.appointment.time.notNull}")
     private LocalTime time;
 
-    @NotBlank(message = "Appointment type cannot be blank")
-    @Size(min = 3, max = 100, message = "Appointment type must be between 3 and 100 characters")
+    @NotBlank(message = "{validation.appointment.type.notBlank}")
+    @Size(min = 3, max = 100, message = "{validation.appointment.type.size}")
     private String type;
 
-    @NotNull(message = "Status is required")
+    @NotNull(message = "{validation.appointment.status.notNull}")
     private Status status;
 
-    @Size(max = 1000, message = "Description cannot exceed 1000 characters")
+    @Size(max = 1000, message = "{validation.appointment.description.size}")
     private String description;
 }

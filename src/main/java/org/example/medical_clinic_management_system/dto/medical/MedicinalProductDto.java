@@ -2,7 +2,6 @@ package org.example.medical_clinic_management_system.dto.medical;
 
 import lombok.Data;
 import jakarta.validation.constraints.*;
-
 import java.math.BigDecimal;
 
 @Data
@@ -10,31 +9,31 @@ public class MedicinalProductDto
 {
     private Long id;
 
-    @NotBlank(message = "Product name cannot be blank")
-    @Size(min = 2, max = 100, message = "Product name must be between 2 and 100 characters")
+    @NotBlank(message = "{validation.medicinalProduct.name.notBlank}")
+    @Size(min = 2, max = 100, message = "{validation.medicinalProduct.name.size}")
     private String name;
 
-    @NotBlank(message = "Composition cannot be blank")
-    @Size(max = 500, message = "Composition cannot exceed 500 characters")
+    @NotBlank(message = "{validation.medicinalProduct.composition.notBlank}")
+    @Size(max = 500, message = "{validation.medicinalProduct.composition.size}")
     private String composition;
 
-    @NotBlank(message = "Manufacturer cannot be blank")
-    @Size(min = 2, max = 100, message = "Manufacturer name must be between 2 and 100 characters")
+    @NotBlank(message = "{validation.medicinalProduct.manufacturer.notBlank}")
+    @Size(min = 2, max = 100, message = "{validation.medicinalProduct.manufacturer.size}")
     private String manufacturer;
 
-    @NotNull(message = "Price is required")
-    @DecimalMin(value = "0.01", inclusive = true, message = "Price must be greater than 0")
+    @NotNull(message = "{validation.medicinalProduct.price.notNull}")
+    @DecimalMin(value = "0.01", inclusive = true, message = "{validation.medicinalProduct.price.min}")
     private BigDecimal price;
 
-    @NotBlank(message = "Form cannot be blank")
-    @Size(max = 50, message = "Form cannot exceed 50 characters")
+    @NotBlank(message = "{validation.medicinalProduct.form.notBlank}")
+    @Size(max = 50, message = "{validation.medicinalProduct.form.size}")
     private String form;
 
-    @NotBlank(message = "Category cannot be blank")
-    @Size(max = 50, message = "Category cannot exceed 50 characters")
+    @NotBlank(message = "{validation.medicinalProduct.category.notBlank}")
+    @Size(max = 50, message = "{validation.medicinalProduct.category.size}")
     private String category;
 
-    @NotNull(message = "Quantity is required")
-    @Min(value = 1, message = "Quantity must be at least 1")
+    @NotNull(message = "{validation.medicinalProduct.quantity.notNull}")
+    @Min(value = 1, message = "{validation.medicinalProduct.quantity.min}")
     private Integer quantity;
 }

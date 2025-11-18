@@ -5,14 +5,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 @Data
-public class SpecializationDto
-{
+public class SpecializationDto {
     private Long id;
 
-    @NotBlank(message = "Specialization name cannot be blank")
-    @Size(min = 2, max = 100, message = "Specialization name must be between 2 and 100 characters")
+    @NotBlank(message = "{validation.specialization.name.notBlank}")
+    @Size(min = 2, max = 100, message = "{validation.specialization.name.size}")
     private String name;
 
-    @Size(max = 500, message = "Description cannot exceed 500 characters")
+    @Size(max = 500, message = "{validation.specialization.description.size}")
     private String description;
 }

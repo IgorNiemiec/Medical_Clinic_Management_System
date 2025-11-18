@@ -7,22 +7,21 @@ import org.example.medical_clinic_management_system.model.visit.ExaminationRoom.
 
 @Data
 @Builder
-public class ExaminationRoomDto
-{
+public class ExaminationRoomDto {
     private Long id;
 
-    @NotBlank(message = "Room number cannot be blank")
-    @Size(min = 1, max = 10, message = "Room number must be between 1 and 10 characters")
+    @NotBlank(message = "{validation.examinationRoom.number.notBlank}")
+    @Size(min = 1, max = 10, message = "{validation.examinationRoom.number.size}")
     private String number;
 
-    @NotBlank(message = "Purpose cannot be blank")
-    @Size(min = 3, max = 100, message = "Purpose must be between 3 and 100 characters")
+    @NotBlank(message = "{validation.examinationRoom.purpose.notBlank}")
+    @Size(min = 3, max = 100, message = "{validation.examinationRoom.purpose.size}")
     private String purpose;
 
-    @NotBlank(message = "Location cannot be blank")
-    @Size(min = 3, max = 255, message = "Location must be between 3 and 255 characters")
+    @NotBlank(message = "{validation.examinationRoom.location.notBlank}")
+    @Size(min = 3, max = 255, message = "{validation.examinationRoom.location.size}")
     private String location;
 
-    @NotNull(message = "Status is required")
+    @NotNull(message = "{validation.examinationRoom.status.notNull}")
     private Status status;
 }

@@ -1,6 +1,5 @@
 package org.example.medical_clinic_management_system.dto.service;
 
-
 import lombok.Builder;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -10,26 +9,25 @@ import java.math.BigDecimal;
 
 @Data
 @Builder
-public class MedicalServiceDto
-{
+public class MedicalServiceDto {
     private Long id;
 
-    @NotBlank(message = "Service name cannot be blank")
-    @Size(min = 2, max = 100, message = "Service name must be between 2 and 100 characters")
+    @NotBlank(message = "{validation.medicalService.name.notBlank}")
+    @Size(min = 2, max = 100, message = "{validation.medicalService.name.size}")
     private String name;
 
-    @NotNull(message = "Price is required")
-    @DecimalMin(value = "0.01", inclusive = true, message = "Price must be greater than 0")
+    @NotNull(message = "{validation.medicalService.price.notNull}")
+    @DecimalMin(value = "0.01", inclusive = true, message = "{validation.medicalService.price.min}")
     private BigDecimal price;
 
-    @Size(max = 1000, message = "Description cannot exceed 1000 characters")
+    @Size(max = 1000, message = "{validation.medicalService.description.size}")
     private String description;
 
-    @NotNull(message = "Duration is required")
-    @Min(value = 1, message = "Duration must be at least 1 minute")
-    @Max(value = 480, message = "Duration cannot exceed 480 minutes (8 hours)")
+    @NotNull(message = "{validation.medicalService.duration.notNull}")
+    @Min(value = 1, message = "{validation.medicalService.duration.min}")
+    @Max(value = 480, message = "{validation.medicalService.duration.max}")
     private Integer duration;
 
-    @NotNull(message = "Category is required")
+    @NotNull(message = "{validation.medicalService.category.notNull}")
     private Category category;
 }
