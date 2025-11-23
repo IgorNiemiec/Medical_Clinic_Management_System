@@ -34,22 +34,56 @@ The project is built using the following core technologies (assuming typical Jav
 
 ## Essential Database Tables for the System
 
-* **User:** Stores data for all system users (patients, medical staff, receptionists), including login credentials (email, password), role, and activity history.
+* **User:** The base entity for all individuals accessing the system. It contains core authentication and identification details.
+   **Role:** Authentication and authorization management.
 
-* **Patient:**  Contains detailed patient information: PESEL (national ID), date of birth, address, phone, gender, linked to the User account.
+* **Employee:** The supertype for all clinic staff. It abstracts common employment data.
+   **Role:** Stores common employee information (e.g., hiring date, contact).
 
-* **Receptionist:** Stores receptionist-specific information, such as employment date and work phone number, linked to the User account.
+* **MedicalStaff:** The subtype for clinical personnel (Doctors, Nurses, Assistants). They are responsible for patient care, diagnoses, and procedures.
+    **Role:** Clinical functions, prescription and diagnosis
 
-* **MedicalStaff:** Holds data for medical employees (doctors, nurses), including employment date, availability, work phone number, and specializations.
+* **Receptionist:** The subtype for administrative personnel. They manage non-clinical operational tasks.
+    **Role:** Administrative tasks, scheduling, booking, payment processing, and patient registration.
 
-* **Specialization** Defines medical specializations (e.g., cardiology, pediatrics) along with their descriptions.
+* **Schedule:** Defines the working hours, on-call periods, or other time commitments for MedicalStaff.
+    **Role:** Resource planning and availability management.
 
-* **Staff_Specialization** A join table connecting MedicalStaff with their Specializations (many-to-many relationship).
+* **ExaminationRoom:** The catalog of physical locations/rooms within the clinic.
+    **Role:** Asset management
 
-* **ExaminationRoom** Manages information about rooms in the clinic, including number, location, purpose (e.g., "consultations", "procedures"), and status (active/inactive).
+* **Appointment:** Represents a scheduled patient visit with a staff member in a specific room at a specific time.
+    **Role:** Core operational unit, linked to all services, notes, and payments.
 
-* **Appointment** Stores appointment details: date, time, service type, status (scheduled/completed/canceled), description, and links to Patient, MedicalStaff, ExaminationRoom, and Receptionist.
+* **MedicalService** The catalog of all billable medical procedures, consultations, or tests offered by the clinic.
+    **Role:** Defines the standard price and scope of services.
+   
+* **AppointmentService** The intermediary entity that records services actually rendered during an Appointment. It is the basis for invoicing.
+    **Role:** Financial tracking and breakdown of services.
 
-* **Payment** Records payment for appointments, with data on amount, payment method, status, unique transaction number, and link to the specific Appointment.
+* **Payment** Records the transaction details for an Appointment. The amount is derived from the sum of associated AppointmentService entries.
+    **Role:** Financial accounting and payment tracking.
+
+* **Patient** Represents a client of the clinic. The entity is linked to a system User (if they have portal access) and their medical history.
+    **Role:** Core patient identity data.
+
+* **PatientCard** The central medical record for a single patient.
+    **Role:** Acts as the parent container for all clinical history.
+
+* **ICD_Code** The catalog of officially recognized diseases and conditions, based on standard classifications ICD-10.
+    **Role:** Formal diagnosis and reporting.
+
+* **DiseaseCourse** Records a specific diagnosis and its progression for a patient, linking the condition to an official ICD_Code.
+    **Role:** Clinical history tracking.
+
+* **MedicalNote** Records all documentation created during or after a patient visit.
+    **Role:** Detailed documentation of patient-physician interactions and findings.
+
+* **Drug** The catalog of officially registered medicinal products, sourced from official governmental registers (e.g., ezdrowie.gov.pl).
+    **Role:** Formal and accurate identification of medications.
+
+* **Prescription** Records the formal issuance of a medication to a patient by a certified staff member.
+    **Role:** Formal documentation of medication orders.
+
 
 
