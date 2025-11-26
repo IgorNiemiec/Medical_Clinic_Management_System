@@ -1,7 +1,6 @@
 package org.example.medical_clinic_management_system.mapper.record;
 
 import org.example.medical_clinic_management_system.dto.record.DiseaseProgressionDto;
-import org.example.medical_clinic_management_system.model.medical.Disease;
 import org.example.medical_clinic_management_system.model.record.DiseaseProgression;
 import org.example.medical_clinic_management_system.model.record.PatientCard;
 import org.springframework.stereotype.Component;

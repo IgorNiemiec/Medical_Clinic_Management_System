@@ -2,7 +2,9 @@ package org.example.medical_clinic_management_system.controller.record;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.medical_clinic_management_system.dto.record.PatientCardDetailsDto;
 import org.example.medical_clinic_management_system.dto.record.PatientCardDto;
+import org.example.medical_clinic_management_system.dto.record.PatientCardRequestDto;
 import org.example.medical_clinic_management_system.service.record.PatientCardService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,33 +18,34 @@ import java.util.List;
 public class PatientCardController
 {
 
-    private final PatientCardService service;
-
-    @GetMapping
-    public List<PatientCardDto> getAll() {
-        return service.getAll();
-    }
-
-    @GetMapping("/{id}")
-    public PatientCardDto getById(@PathVariable Long id) {
-        return service.getById(id);
-    }
+    private final PatientCardService patientCardService;
 
     @PostMapping
-    public ResponseEntity<PatientCardDto> create(@Valid @RequestBody PatientCardDto dto) {
-        PatientCardDto saved = service.create(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    public ResponseEntity<PatientCardDetailsDto> createPatientCard(@Valid @RequestBody PatientCardRequestDto requestDto) {
+        PatientCardDetailsDto newCard = patientCardService.createPatientCard(requestDto);
+        return new ResponseEntity<>(newCard, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public PatientCardDto update(@PathVariable Long id, @RequestBody PatientCardDto dto) {
-        return service.update(id, dto);
+    @GetMapping("/{cardId}")
+    public ResponseEntity<PatientCardDetailsDto> getPatientCardById(@PathVariable Long cardId) {
+        PatientCardDetailsDto card = patientCardService.getPatientCardById(cardId);
+        return ResponseEntity.ok(card);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.delete(id);
+    @GetMapping
+    public ResponseEntity<PatientCardDetailsDto> getPatientCardByPatientId(@RequestParam Long patientId) {
+        PatientCardDetailsDto card = patientCardService.getPatientCardByPatientId(patientId);
+        return ResponseEntity.ok(card);
+    }
+
+    @DeleteMapping("/{cardId}")
+    public ResponseEntity<Void> deletePatientCard(@PathVariable Long cardId) {
+        patientCardService.deletePatientCard(cardId);
         return ResponseEntity.noContent().build();
     }
+
+
+
+
 
 }

@@ -2,9 +2,9 @@ package org.example.medical_clinic_management_system.service.visit;
 
 import lombok.RequiredArgsConstructor;
 import org.example.medical_clinic_management_system.dto.visit.PrescriptionDto;
-import org.example.medical_clinic_management_system.mapper.visit.PrescriptionMapper;
-import org.example.medical_clinic_management_system.model.visit.Prescription;
-import org.example.medical_clinic_management_system.repository.visit.PrescriptionRepository;
+import org.example.medical_clinic_management_system.mapper.pharmacy.PrescriptionMapper;
+import org.example.medical_clinic_management_system.model.pharmacy.Prescription;
+import org.example.medical_clinic_management_system.repository.pharmacy.PrescriptionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

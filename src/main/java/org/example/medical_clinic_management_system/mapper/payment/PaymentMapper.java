@@ -1,37 +1,39 @@
 package org.example.medical_clinic_management_system.mapper.payment;
 
+import org.example.medical_clinic_management_system.dto.payment.PaymentDetailsDto;
 import org.example.medical_clinic_management_system.dto.payment.PaymentDto;
 import org.example.medical_clinic_management_system.model.payment.Payment;
-import org.example.medical_clinic_management_system.model.visit.Appointment;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class PaymentMapper
 {
 
-    public PaymentDto toDto(Payment entity) {
-        PaymentDto dto = new PaymentDto();
+
+    public PaymentDetailsDto toDetailsDto(Payment entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        PaymentDetailsDto dto = new PaymentDetailsDto();
         dto.setId(entity.getId());
-        dto.setAppointmentId(entity.getAppointment().getId());
+        dto.setInvoiceId(entity.getInvoice().getId());
         dto.setAmount(entity.getAmount());
-        dto.setDate(entity.getDate());
         dto.setPaymentMethod(entity.getPaymentMethod());
-        dto.setStatus(entity.getStatus());
-        dto.setTransactionNumber(entity.getTransactionNumber());
+        dto.setPaymentDateTime(entity.getPaymentDateTime());
+        dto.setTransactionReference(entity.getTransactionReference());
+
         return dto;
     }
 
-    public Payment toEntity(PaymentDto dto, Appointment appointment) {
-        return Payment.builder()
-                .id(dto.getId())
-                .appointment(appointment)
-                .amount(dto.getAmount())
-                .date(dto.getDate())
-                .paymentMethod(dto.getPaymentMethod())
-                .status(dto.getStatus())
-                .transactionNumber(dto.getTransactionNumber())
-                .build();
-    }
 
+    public List<PaymentDetailsDto> toDetailsDtoList(List<Payment> entities) {
+        return entities.stream()
+                .map(this::toDetailsDto)
+                .collect(Collectors.toList());
+    }
 
 }

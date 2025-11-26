@@ -1,14 +1,24 @@
 package org.example.medical_clinic_management_system.service.payment;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.example.medical_clinic_management_system.dto.payment.InvoiceDetailsDto;
+import org.example.medical_clinic_management_system.dto.payment.PaymentDetailsDto;
 import org.example.medical_clinic_management_system.dto.payment.PaymentDto;
+import org.example.medical_clinic_management_system.dto.payment.PaymentRequestDto;
 import org.example.medical_clinic_management_system.mapper.payment.PaymentMapper;
+import org.example.medical_clinic_management_system.model.payment.Invoice;
 import org.example.medical_clinic_management_system.model.payment.Payment;
 import org.example.medical_clinic_management_system.model.visit.Appointment;
+import org.example.medical_clinic_management_system.repository.payment.InvoiceRepository;
 import org.example.medical_clinic_management_system.repository.payment.PaymentRepository;
 import org.example.medical_clinic_management_system.repository.visit.AppointmentRepository;
+import org.example.medical_clinic_management_system.service.medicalService.AppointmentMedicalServiceService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,42 +27,99 @@ import java.util.stream.Collectors;
 public class PaymentService
 {
 
-    private final PaymentRepository repository;
+    private final PaymentRepository paymentRepository;
     private final AppointmentRepository appointmentRepository;
-    private final PaymentMapper mapper;
+    private final InvoiceRepository invoiceRepository;
+    private final PaymentMapper paymentMapper;
+    private final AppointmentMedicalServiceService appointmentMedicalServiceService;
 
-    public List<PaymentDto> getAll() {
-        return repository.findAll()
-                .stream()
-                .map(mapper::toDto)
-                .collect(Collectors.toList());
+
+
+    @Transactional
+    public PaymentDetailsDto registerPayment(PaymentRequestDto requestDto) {
+
+
+        Invoice invoice = invoiceRepository.findById(requestDto.getInvoiceId())
+                .orElseThrow(() -> new RuntimeException("Invoice"));
+
+
+        BigDecimal totalCost = appointmentMedicalServiceService.calculateTotalCost(requestDto.getInvoiceId());
+        BigDecimal totalPaid = calculateTotalPaid(requestDto.getInvoiceId());
+        BigDecimal outstandingBalance = totalCost.subtract(totalPaid);
+
+        if (requestDto.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Kwota płatności musi być większa niż zero.");
+        }
+
+
+        if (requestDto.getAmount().compareTo(outstandingBalance) > 0 && outstandingBalance.compareTo(BigDecimal.ZERO) > 0) {
+            System.out.println("OSTRZEŻENIE: Płatność ( " + requestDto.getAmount() + " ) przekracza pozostałe saldo ( " + outstandingBalance + " ) dla faktury " + requestDto.getInvoiceId());
+        }
+
+
+        Payment payment = Payment.builder()
+                .invoice(invoice)
+                .amount(requestDto.getAmount())
+                .paymentMethod(requestDto.getPaymentMethod())
+                .paymentDateTime(requestDto.getPaymentDateTime() != null ? requestDto.getPaymentDateTime() : LocalDateTime.now())
+                .transactionReference(requestDto.getTransactionReference())
+                .build();
+
+        Payment savedPayment = paymentRepository.save(payment);
+
+        return paymentMapper.toDetailsDto(savedPayment);
     }
 
-    public PaymentDto getById(Long id) {
-        return repository.findById(id)
-                .map(mapper::toDto)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
+    @Transactional
+    public PaymentDetailsDto getPaymentById(Long id) {
+        Payment payment = paymentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Płatność"));
+        return paymentMapper.toDetailsDto(payment);
     }
 
-    public PaymentDto create(PaymentDto dto) {
-        Appointment appointment = appointmentRepository.findById(dto.getAppointmentId())
-                .orElseThrow(() -> new RuntimeException("Appointment not found"));
-        Payment entity = mapper.toEntity(dto, appointment);
-        return mapper.toDto(repository.save(entity));
+
+    @Transactional
+    public List<PaymentDetailsDto> getPaymentsByInvoiceId(Long invoiceId)
+    {
+        if (!invoiceRepository.existsById(invoiceId))
+        {
+            throw new RuntimeException("Invoice");
+        }
+        List<Payment> payments = paymentRepository.findByInvoiceId(invoiceId);
+        return paymentMapper.toDetailsDtoList(payments);
     }
 
-    public PaymentDto update(Long id, PaymentDto dto) {
-        Payment existing = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
-        Appointment appointment = appointmentRepository.findById(dto.getAppointmentId())
-                .orElseThrow(() -> new RuntimeException("Appointment not found"));
-        Payment updated = mapper.toEntity(dto, appointment);
-        updated.setId(id);
-        return mapper.toDto(repository.save(updated));
+
+
+    @Transactional
+    public BigDecimal calculateTotalPaid(Long appointmentId) {
+        if (!appointmentRepository.existsById(appointmentId)) {
+            throw new RuntimeException("Wizyta");
+        }
+        return paymentRepository.calculateTotalPaymentsForInvoice(appointmentId).setScale(2, RoundingMode.HALF_UP);
     }
 
-    public void delete(Long id) {
-        repository.deleteById(id);
+    @Transactional
+    public BigDecimal calculateOutstandingBalance(Long appointmentId) {
+
+        BigDecimal totalCost = appointmentMedicalServiceService.calculateTotalCost(appointmentId);
+
+        BigDecimal totalPaid = calculateTotalPaid(appointmentId);
+
+        return totalCost.subtract(totalPaid).setScale(2, RoundingMode.HALF_UP);
     }
+
+
+    @Transactional
+    public void deletePayment(Long id) {
+        if (!paymentRepository.existsById(id)) {
+            throw new RuntimeException("Płatność");
+        }
+        paymentRepository.deleteById(id);
+    }
+
+
+
+
 
 }

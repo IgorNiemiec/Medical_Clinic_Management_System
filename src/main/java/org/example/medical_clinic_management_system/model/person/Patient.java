@@ -18,29 +18,39 @@ public class Patient
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "user_id", referencedColumnName = "id",nullable = false)
+    // Relacja OneToOne z User - dane osobowe pacjenta
+    // Używamy @MapsId, aby id encji Patient było jednocześnie id encji User
+    // W naszym przypadku, zgodnie ze schematem, to jest prosta relacja OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "dateOfBirth", nullable = false)
+    @Column(nullable = false)
     private LocalDate dateOfBirth;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(length = 255)
     private String address;
 
-    @Column(length = 20, nullable = false)
-    private String phone;
+    @Column(length = 12)
+    private String phoneNumber;
 
-    @Column(length = 11, nullable = false, unique = true)
+
+    @Column(nullable = false, unique = true, length = 11)
     private String pesel;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 10)
     private Gender gender;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "registered_by", nullable = false)
+    private Employee registeredBy;
 
     public enum Gender
     {
-        MALE,FEMALE
+        MALE,
+        FEMALE
     }
 
 }
+

@@ -2,11 +2,15 @@ package org.example.medical_clinic_management_system.controller.visit;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.medical_clinic_management_system.dto.visit.AppointmentDto;
+import org.example.medical_clinic_management_system.dto.visit.AppointmentDetailsDto;
+import org.example.medical_clinic_management_system.dto.visit.AppointmentRequestDto;
 import org.example.medical_clinic_management_system.service.visit.AppointmentService;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -17,30 +21,43 @@ public class AppointmentController
 
     private final AppointmentService appointmentService;
 
-    @GetMapping
-    public ResponseEntity<List<AppointmentDto>> getAll() {
-        return ResponseEntity.ok(appointmentService.getAll());
+    @PostMapping
+    public ResponseEntity<AppointmentDetailsDto> createAppointment(@Valid @RequestBody AppointmentRequestDto dto) {
+
+        AppointmentDetailsDto newAppointment = appointmentService.createAppointment(dto);
+        return new ResponseEntity<>(newAppointment, HttpStatus.CREATED);
     }
+
 
     @GetMapping("/{id}")
-    public ResponseEntity<AppointmentDto> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(appointmentService.getById(id));
+    public ResponseEntity<AppointmentDetailsDto> getAppointmentById(@PathVariable Long id) {
+        AppointmentDetailsDto appointment = appointmentService.getAppointmentById(id);
+        return ResponseEntity.ok(appointment);
     }
 
-    @PostMapping
-    public ResponseEntity<AppointmentDto> create(@Valid @RequestBody AppointmentDto dto) {
-        return ResponseEntity.ok(appointmentService.create(dto));
+    @GetMapping("/schedule/staff/{medicalStaffId}")
+    public ResponseEntity<List<AppointmentDetailsDto>> getStaffScheduleForDay(
+            @PathVariable Long medicalStaffId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+
+        List<AppointmentDetailsDto> schedule = appointmentService.getStaffScheduleForDay(medicalStaffId, date);
+        return ResponseEntity.ok(schedule);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AppointmentDto> update(@PathVariable Long id, @RequestBody AppointmentDto dto) {
-        return ResponseEntity.ok(appointmentService.update(id, dto));
+    public ResponseEntity<AppointmentDetailsDto> updateAppointment(@PathVariable Long id, @Valid @RequestBody AppointmentRequestDto dto) {
+        AppointmentDetailsDto updatedAppointment = appointmentService.updateAppointment(id, dto);
+        return ResponseEntity.ok(updatedAppointment);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        appointmentService.delete(id);
+    public ResponseEntity<Void> deleteAppointment(@PathVariable Long id) {
+        appointmentService.deleteAppointment(id);
         return ResponseEntity.noContent().build();
     }
+
+
+
+
 
 }

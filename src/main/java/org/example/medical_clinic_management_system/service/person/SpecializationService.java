@@ -3,7 +3,7 @@ package org.example.medical_clinic_management_system.service.person;
 import lombok.RequiredArgsConstructor;
 import org.example.medical_clinic_management_system.dto.person.SpecializationDto;
 import org.example.medical_clinic_management_system.mapper.person.SpecializationMapper;
-import org.example.medical_clinic_management_system.model.person.Specialization;
+import org.example.medical_clinic_management_system.model.specialization.Specialization;
 import org.example.medical_clinic_management_system.repository.person.SpecializationRepository;
 import org.springframework.stereotype.Service;
 

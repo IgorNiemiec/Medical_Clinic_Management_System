@@ -1,6 +1,5 @@
 package org.example.medical_clinic_management_system.repository.record;
 
-import org.example.medical_clinic_management_system.model.medical.Disease;
 import org.example.medical_clinic_management_system.model.record.DiseaseProgression;
 import org.example.medical_clinic_management_system.model.record.PatientCard;
 import org.springframework.data.jpa.repository.JpaRepository;

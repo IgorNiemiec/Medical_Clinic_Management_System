@@ -1,6 +1,6 @@
 package org.example.medical_clinic_management_system.repository.person;
 
-import org.example.medical_clinic_management_system.model.person.Specialization;
+import org.example.medical_clinic_management_system.model.specialization.Specialization;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

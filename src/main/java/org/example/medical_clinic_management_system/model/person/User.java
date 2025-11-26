@@ -48,8 +48,7 @@ public class User
     public enum Role
     {
         PATIENT,
-        RECEPTIONIST,
-        MEDICALSTAFF,
+        EMPLOYEE,
         ADMIN
     }
 

@@ -1,38 +1,37 @@
 package org.example.medical_clinic_management_system.repository.visit;
 
 import org.example.medical_clinic_management_system.model.visit.Appointment;
-import org.example.medical_clinic_management_system.model.visit.Appointment.Status;
-import org.example.medical_clinic_management_system.model.person.Patient;
-import org.example.medical_clinic_management_system.model.person.MedicalStaff;
-import org.example.medical_clinic_management_system.model.person.Receptionist;
-import org.example.medical_clinic_management_system.model.visit.ExaminationRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
+@Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long>
 {
 
-    List<Appointment> findByPatient(Patient patient);
+    List<Appointment> findByPatientIdOrderByTimeDesc(Long patientId);
 
-    List<Appointment> findByMedicalStaff(MedicalStaff staff);
+    List<Appointment> findByMedicalStaffIdAndDateOrderByTimeAsc(Long medicalStaffId, LocalDate date);
 
-    List<Appointment> findByReceptionist(Receptionist receptionist);
+    List<Appointment> findByExaminationRoomIdAndDateOrderByTimeAsc(Long examinationRoomId, LocalDate date);
 
-    List<Appointment> findByRoom(ExaminationRoom room);
+    @Query("SELECT a FROM Appointment a " +
+            "WHERE a.id <> :excludedAppointmentId AND a.status IN ('SCHEDULED', 'CONFIRMED') AND (" +
+            "(a.medicalStaff.id = :medicalStaffId) OR " +
+            "(a.examinationRoom.id = :examinationRoomId)) AND (" +
+            "a.time < :endDateTime AND :startDateTime < a.time)")
+    List<Appointment> findConflictingAppointments(
+            @Param("medicalStaffId") Long medicalStaffId,
+            @Param("examinationRoomId") Long examinationRoomId,
+            @Param("startDateTime") LocalDateTime startDateTime,
+            @Param("endDateTime") LocalDateTime endDateTime,
+            @Param("excludedAppointmentId") Long excludedAppointmentId);
 
-    List<Appointment> findByStatus(Status status);
-
-    List<Appointment> findByDate(LocalDate date);
-
-    List<Appointment> findByMedicalStaffAndDate(MedicalStaff staff, LocalDate date);
-
-    List<Appointment> findByPatientAndDate(Patient patient, LocalDate date);
-
-    List<Appointment> findByTypeContainingIgnoreCase(String type);
-
-    List<Appointment> findByRoomAndDateAndTime(ExaminationRoom room, LocalDate date, LocalTime time);
+    List<Appointment> findByDateBeforeAndStatus(LocalDate date, Appointment.AppointmentStatus status);
 
 }

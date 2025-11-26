@@ -1,7 +1,10 @@
 package org.example.medical_clinic_management_system.service.visit;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.example.medical_clinic_management_system.dto.visit.ExaminationRoomDetailsDto;
 import org.example.medical_clinic_management_system.dto.visit.ExaminationRoomDto;
+import org.example.medical_clinic_management_system.dto.visit.ExaminationRoomRequestDto;
 import org.example.medical_clinic_management_system.mapper.visit.ExaminationRoomMapper;
 import org.example.medical_clinic_management_system.model.visit.ExaminationRoom;
 import org.example.medical_clinic_management_system.repository.visit.ExaminationRoomRepository;
@@ -18,36 +21,80 @@ public class ExaminationRoomService
     private final ExaminationRoomRepository examinationRoomRepository;
     private final ExaminationRoomMapper examinationRoomMapper;
 
-    public List<ExaminationRoomDto> getAll() {
-        return examinationRoomRepository.findAll()
-                .stream()
-                .map(examinationRoomMapper::toDto)
-                .collect(Collectors.toList());
+    @Transactional
+    public List<ExaminationRoomDetailsDto> getAllRooms() {
+        List<ExaminationRoom> entities = examinationRoomRepository.findAll();
+        return examinationRoomMapper.toDetailsDtoList(entities);
     }
 
-    public ExaminationRoomDto getById(Long id) {
-        return examinationRoomMapper.toDto(
-                examinationRoomRepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException("Examination room not found"))
-        );
+
+    @Transactional
+    public List<ExaminationRoomDetailsDto> getRoomsByStatus(ExaminationRoom.ExaminationRoomStatus status) {
+        List<ExaminationRoom> entities = examinationRoomRepository.findByStatus(status);
+        return examinationRoomMapper.toDetailsDtoList(entities);
     }
 
-    public ExaminationRoomDto create(ExaminationRoomDto dto) {
-        ExaminationRoom room = examinationRoomMapper.toEntity(dto);
-        return examinationRoomMapper.toDto(examinationRoomRepository.save(room));
+    @Transactional
+    public ExaminationRoomDetailsDto getRoomById(Long id) {
+        ExaminationRoom entity = examinationRoomRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Gabinet o ID: " + id + " nie został znaleziony."));
+        return examinationRoomMapper.toDetailsDto(entity);
     }
 
-    public ExaminationRoomDto update(Long id, ExaminationRoomDto dto) {
-        ExaminationRoom existing = examinationRoomRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Examination room not found"));
-        ExaminationRoom updated = examinationRoomMapper.toEntity(dto);
-        updated.setId(existing.getId());
-        return examinationRoomMapper.toDto(examinationRoomRepository.save(updated));
+    @Transactional
+    public ExaminationRoomDetailsDto createRoom(ExaminationRoomRequestDto requestDto) {
+
+        examinationRoomRepository.findByNumber(requestDto.getNumber()).ifPresent(room -> {
+            throw new IllegalStateException("Gabinet o numerze: " + requestDto.getNumber() + " już istnieje.");
+        });
+
+        ExaminationRoom entity = examinationRoomMapper.toEntity(requestDto);
+        ExaminationRoom savedEntity = examinationRoomRepository.save(entity);
+
+        return examinationRoomMapper.toDetailsDto(savedEntity);
     }
 
-    public void delete(Long id) {
+    @Transactional
+    public ExaminationRoomDetailsDto updateRoom(Long id, ExaminationRoomRequestDto requestDto) {
+        ExaminationRoom entity = examinationRoomRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Gabinet o ID: " + id + " nie został znaleziony."));
+
+
+        if (requestDto.getNumber() != null && !requestDto.getNumber().equals(entity.getNumber())) {
+            examinationRoomRepository.findByNumber(requestDto.getNumber()).ifPresent(room -> {
+                if (!room.getId().equals(id)) {
+                    throw new IllegalStateException("Gabinet o numerze: " + requestDto.getNumber() + " już istnieje w innym rekordzie.");
+                }
+            });
+        }
+
+        examinationRoomMapper.updateEntity(entity, requestDto);
+        ExaminationRoom updatedEntity = examinationRoomRepository.save(entity);
+
+        return examinationRoomMapper.toDetailsDto(updatedEntity);
+    }
+
+    @Transactional
+    public ExaminationRoomDetailsDto updateRoomStatus(Long id, ExaminationRoom.ExaminationRoomStatus newStatus) {
+        ExaminationRoom entity = examinationRoomRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Gabinet o ID: " + id + " nie został znaleziony."));
+
+        entity.setStatus(newStatus);
+        ExaminationRoom updatedEntity = examinationRoomRepository.save(entity);
+
+        return examinationRoomMapper.toDetailsDto(updatedEntity);
+    }
+
+    @Transactional
+    public void deleteRoom(Long id) {
+        if (!examinationRoomRepository.existsById(id)) {
+            throw new RuntimeException("Nie można usunąć. Gabinet o ID: " + id + " nie istnieje.");
+        }
+        // TODO: systemie należy sprawdzić, czy gabinet nie jest aktualnie powiązany z Appointment.
+
         examinationRoomRepository.deleteById(id);
     }
+
 
 
 }

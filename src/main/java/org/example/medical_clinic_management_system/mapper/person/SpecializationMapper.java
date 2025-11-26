@@ -1,7 +1,7 @@
 package org.example.medical_clinic_management_system.mapper.person;
 
 import org.example.medical_clinic_management_system.dto.person.SpecializationDto;
-import org.example.medical_clinic_management_system.model.person.Specialization;
+import org.example.medical_clinic_management_system.model.specialization.Specialization;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,10 +1,16 @@
 package org.example.medical_clinic_management_system.service.person;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.example.medical_clinic_management_system.dto.person.PatientDetailsDto;
 import org.example.medical_clinic_management_system.dto.person.PatientDto;
+import org.example.medical_clinic_management_system.dto.person.PatientListItemDto;
+import org.example.medical_clinic_management_system.dto.person.PatientRequestDto;
 import org.example.medical_clinic_management_system.mapper.person.PatientMapper;
+import org.example.medical_clinic_management_system.model.person.Employee;
 import org.example.medical_clinic_management_system.model.person.Patient;
 import org.example.medical_clinic_management_system.model.person.User;
+import org.example.medical_clinic_management_system.repository.person.EmployeeRepository;
 import org.example.medical_clinic_management_system.repository.person.PatientRepository;
 import org.example.medical_clinic_management_system.repository.person.UserRepository;
 import org.springframework.stereotype.Service;
@@ -17,42 +23,94 @@ import java.util.stream.Collectors;
 public class PatientService
 {
 
-    private final PatientRepository repository;
+    private final PatientRepository patientRepository;
     private final UserRepository userRepository;
-    private final PatientMapper mapper;
+    private final EmployeeRepository employeeRepository;
+    private final PatientMapper patientMapper;
 
-    public List<PatientDto> getAll() {
-        return repository.findAll()
-                .stream()
-                .map(mapper::toDto)
-                .collect(Collectors.toList());
+    @Transactional
+    public PatientDetailsDto registerPatient(PatientRequestDto requestDto) {
+
+        if (patientRepository.existsByPesel(requestDto.getPesel())) {
+            throw new RuntimeException("Pacjent o numerze PESEL: " + requestDto.getPesel() + " jest już zarejestrowany.");
+        }
+
+
+        User user = userRepository.findById(requestDto.getUserId())
+                .orElseThrow(() -> new RuntimeException("Konto użytkownika (User) o ID: " + requestDto.getUserId() + " nie zostało znalezione."));
+
+        Employee registeredBy = employeeRepository.findById(requestDto.getRegisteredByEmployeeId())
+                .orElseThrow(() -> new RuntimeException("Pracownik rejestrujący (Employee) o ID: " + requestDto.getRegisteredByEmployeeId() + " nie został znaleziony."));
+
+        Patient patient = patientMapper.toEntity(requestDto);
+
+        patient.setUser(user);
+        patient.setRegisteredBy(registeredBy);
+
+        Patient savedPatient = patientRepository.save(patient);
+
+        return patientMapper.toDetailsDto(savedPatient);
     }
 
-    public PatientDto getById(Long id) {
-        return repository.findById(id)
-                .map(mapper::toDto)
-                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+    @Transactional
+    public PatientDetailsDto getPatientById(Long patientId) {
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Pacjent nie został znaleziony o ID: " + patientId));
+
+        return patientMapper.toDetailsDto(patient);
     }
 
-    public PatientDto create(PatientDto dto) {
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        Patient entity = mapper.toEntity(dto, user);
-        return mapper.toDto(repository.save(entity));
+    @Transactional
+    public PatientDetailsDto getPatientByPesel(String pesel) {
+        Patient patient = patientRepository.findByPesel(pesel)
+                .orElseThrow(() -> new RuntimeException("Pacjent nie został znaleziony o numerze PESEL: " + pesel));
+
+        return patientMapper.toDetailsDto(patient);
     }
 
-    public PatientDto update(Long id, PatientDto dto) {
-        Patient existing = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Patient not found"));
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        Patient updated = mapper.toEntity(dto, user);
-        updated.setId(id);
-        return mapper.toDto(repository.save(updated));
+    @Transactional
+    public List<PatientListItemDto> getAllPatients() {
+        List<Patient> patients = patientRepository.findAll();
+        return patientMapper.toListItemDtoList(patients);
     }
 
-    public void delete(Long id) {
-        repository.deleteById(id);
+    @Transactional
+    public PatientDetailsDto updatePatient(Long patientId, PatientRequestDto requestDto) {
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Pacjent nie został znaleziony o ID: " + patientId));
+
+        if (!patient.getPesel().equals(requestDto.getPesel()) && patientRepository.existsByPesel(requestDto.getPesel())) {
+            throw new RuntimeException("Numer PESEL: " + requestDto.getPesel() + " jest już zajęty przez innego pacjenta.");
+        }
+
+        Employee registeredBy = employeeRepository.findById(requestDto.getRegisteredByEmployeeId())
+                .orElseThrow(() -> new RuntimeException("Pracownik rejestrujący o ID: " + requestDto.getRegisteredByEmployeeId() + " nie został znaleziony."));
+
+        patient.setDateOfBirth(requestDto.getDateOfBirth());
+        patient.setAddress(requestDto.getAddress());
+        patient.setPhoneNumber(requestDto.getPhoneNumber());
+        patient.setPesel(requestDto.getPesel());
+        patient.setGender(requestDto.getGender());
+        patient.setRegisteredBy(registeredBy);
+
+
+        Patient updatedPatient = patientRepository.save(patient);
+        return patientMapper.toDetailsDto(updatedPatient);
     }
+
+    @Transactional
+    public void deletePatient(Long patientId) {
+        if (!patientRepository.existsById(patientId)) {
+            throw new RuntimeException("Pacjent nie został znaleziony o ID: " + patientId);
+        }
+
+        patientRepository.deleteById(patientId);
+    }
+
+
+
+
+
 
 }

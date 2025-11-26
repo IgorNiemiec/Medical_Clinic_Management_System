@@ -5,15 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.medical_clinic_management_system.model.person.Receptionist;
 import org.example.medical_clinic_management_system.model.person.MedicalStaff;
 import org.example.medical_clinic_management_system.model.person.Patient;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Appointment")
+@Table(name = "appointment")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,42 +24,53 @@ public class Appointment
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "receptionist_id", nullable = false)
-    private Receptionist receptionist;
-
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "medicalStaff_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "medical_staff_id", nullable = false)
     private MedicalStaff medicalStaff;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "examinationRoom_id", nullable = false)
-    private ExaminationRoom room;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "examination_room_id", nullable = false)
+    private ExaminationRoom examinationRoom;
+
 
     @Column(nullable = false)
     private LocalDate date;
 
     @Column(nullable = false)
-    private LocalTime time;
-
-    @Column(length = 100, nullable = false)
-    private String type;
+    private LocalDateTime time;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Status status;
+    @Column(nullable = false, length = 20)
+    private AppointmentType type;
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    private AppointmentStatus status;
+
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    public enum Status {
+
+    public enum AppointmentType
+    {
+        CONSULTATION,
+        FOLLOW_UP,
+        PROCEDURE,
+        TELEMEDICINE
+    }
+
+    public enum AppointmentStatus
+    {
         SCHEDULED,
+        CONFIRMED,
         COMPLETED,
-        CANCELLED
+        CANCELLED_BY_PATIENT,
+        CANCELLED_BY_STAFF,
+        NO_SHOW
     }
 
 }

@@ -4,27 +4,25 @@ import org.example.medical_clinic_management_system.model.person.Patient;
 import org.example.medical_clinic_management_system.model.person.Patient.Gender;
 import org.example.medical_clinic_management_system.model.person.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface PatientRepository extends JpaRepository<Patient, Long>
 {
 
-    Optional<Patient> findByUser(User user);
 
     Optional<Patient> findByPesel(String pesel);
 
-    Optional<Patient> findByPhone(String phone);
+    boolean existsByPesel(String pesel);
 
-    List<Patient> findByGender(Gender gender);
+    Optional<Patient> findByUserId(Long userId);
 
-    List<Patient> findByDateOfBirthBefore(LocalDate date);
+    List<Patient> findByUserFirstNameContainingIgnoreCaseOrUserSurnameContainingIgnoreCase(String searchFragment, String searchFragment2);
 
-    List<Patient> findByDateOfBirthAfter(LocalDate date);
-
-    List<Patient> findByAddressContainingIgnoreCase(String keyword);
-
+    Optional<Patient> findByPhoneNumber(String phoneNumber);
 
 }

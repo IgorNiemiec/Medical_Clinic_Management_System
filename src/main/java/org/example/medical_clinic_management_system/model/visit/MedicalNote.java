@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.medical_clinic_management_system.model.person.MedicalStaff;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "medical_note")
@@ -21,9 +23,13 @@ public class MedicalNote
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "appointment_id", nullable = false)
     private Appointment appointment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "medical_staff_id", nullable = false)
+    private MedicalStaff medicalStaff;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
@@ -32,13 +38,20 @@ public class MedicalNote
     private LocalDate date;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private NoteType type;
+    @Column(name = "note_type", nullable = false, length = 50)
+    private MedicalNoteType noteType;
 
-    public enum NoteType {
-        DIAGNOSIS,
-        RECOMMENDATION,
-        OBSERVATION,
+    @Column(nullable = false)
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    public enum MedicalNoteType
+    {
+        EXAMINATION_REPORT,
+        DIAGNOSIS_SUMMARY,
+        TREATMENT_PLAN,
+        PROCEDURE_NOTE,
+        REFERRAL_NOTE,
         OTHER
     }
 

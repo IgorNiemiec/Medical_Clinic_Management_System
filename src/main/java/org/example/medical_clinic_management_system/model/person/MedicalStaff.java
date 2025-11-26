@@ -23,21 +23,18 @@ public class MedicalStaff
     private Long id;
 
     @OneToOne(optional = false)
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    private User user;
-
-    @Column(name = "employment_date")
-    private LocalDate employmentDate;
-
-    @Column(name = "work_phone", length = 12, unique = true)
-    private String workPhone;
+    @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)
+    private Employee employee;
 
     @Column(nullable = false)
-    private boolean available;
+    private boolean availability;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Profession profession;
+
+    @Column(name = "license_number", unique = true, nullable = false)
+    private String licenseNumber;
 
     public enum Profession {
         DOCTOR,

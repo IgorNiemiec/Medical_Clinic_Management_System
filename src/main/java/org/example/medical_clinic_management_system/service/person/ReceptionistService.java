@@ -3,8 +3,10 @@ package org.example.medical_clinic_management_system.service.person;
 import lombok.RequiredArgsConstructor;
 import org.example.medical_clinic_management_system.dto.person.ReceptionistDto;
 import org.example.medical_clinic_management_system.mapper.person.ReceptionistMapper;
+import org.example.medical_clinic_management_system.model.person.Employee;
 import org.example.medical_clinic_management_system.model.person.Receptionist;
 import org.example.medical_clinic_management_system.model.person.User;
+import org.example.medical_clinic_management_system.repository.person.EmployeeRepository;
 import org.example.medical_clinic_management_system.repository.person.ReceptionistRepository;
 import org.example.medical_clinic_management_system.repository.person.UserRepository;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,7 @@ public class ReceptionistService
 {
 
     private final ReceptionistRepository repository;
-    private final UserRepository userRepository;
+    private final EmployeeRepository employeeRepository;
     private final ReceptionistMapper mapper;
 
     public List<ReceptionistDto> getAll() {
@@ -35,18 +37,18 @@ public class ReceptionistService
     }
 
     public ReceptionistDto create(ReceptionistDto dto) {
-        User user = userRepository.findById(dto.getUserId())
+        Employee employee = employeeRepository.findById(dto.getEmployeeId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Receptionist entity = mapper.toEntity(dto, user);
+        Receptionist entity = mapper.toEntity(dto, employee);
         return mapper.toDto(repository.save(entity));
     }
 
     public ReceptionistDto update(Long id, ReceptionistDto dto) {
         Receptionist existing = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Receptionist not found"));
-        User user = userRepository.findById(dto.getUserId())
+        Employee employee = employeeRepository.findById(dto.getEmployeeId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Receptionist updated = mapper.toEntity(dto, user);
+        Receptionist updated = mapper.toEntity(dto, employee);
         updated.setId(id);
         return mapper.toDto(repository.save(updated));
     }

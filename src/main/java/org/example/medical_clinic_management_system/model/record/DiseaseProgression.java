@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.medical_clinic_management_system.model.medical.Disease;
 
 import java.time.LocalDate;
 

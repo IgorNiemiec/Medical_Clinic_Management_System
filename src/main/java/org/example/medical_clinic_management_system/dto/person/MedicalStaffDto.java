@@ -10,18 +10,10 @@ import java.time.LocalDate;
 public class MedicalStaffDto {
     private Long id;
 
-    @NotNull(message = "{validation.medicalStaff.userId.notNull}")
-    private Long userId;
+    @NotNull(message = "{validation.medicalStaff.employeeId.notNull}")
+    private Long employeeId;
 
-    @NotNull(message = "{validation.medicalStaff.employmentDate.notNull}")
-    @PastOrPresent(message = "{validation.medicalStaff.employmentDate.pastOrPresent}")
-    private LocalDate employmentDate;
-
-    @NotBlank(message = "{validation.medicalStaff.workPhone.notBlank}")
-    @Pattern(regexp = "^[0-9\\-+]{9,15}$", message = "{validation.medicalStaff.workPhone.pattern}")
-    private String workPhone;
-
-    private boolean available;
+    private boolean availability;
 
     @NotNull(message = "{validation.medicalStaff.profession.notNull}")
     private Profession profession;

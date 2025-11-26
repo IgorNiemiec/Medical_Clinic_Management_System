@@ -23,12 +23,8 @@ public class Receptionist
     private Long id;
 
     @OneToOne(optional = false)
-    @JoinColumn(name = "user_id",referencedColumnName = "id", nullable = false)
-    private User user;
+    @JoinColumn(name = "employee_id",referencedColumnName = "id", nullable = false)
+    private Employee employee;
 
-    @Column(name = "employment_date", nullable = false)
-    private LocalDate employmentDate;
 
-    @Column(name = "work_phone",length = 12)
-    private String workPhone;
 }

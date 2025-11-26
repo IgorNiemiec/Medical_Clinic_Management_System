@@ -20,23 +20,25 @@ public class ExaminationRoom
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20,nullable = true, unique = true)
+    @Column(nullable = false, unique = true, length = 10)
     private String number;
 
-    @Column(length = 20,nullable = true, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String purpose;
 
-    @Column(length = 100,nullable = false)
-    private String location;
-
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Status status;
+    @Column(nullable = false, length = 20)
+    private ExaminationRoomStatus status;
 
-    public enum Status
+
+    public enum ExaminationRoomStatus
     {
-      ACTIVE,
-        INACTIVE
+        AVAILABLE,
+        OCCUPIED,
+        CLEANING,
+        MAINTENANCE
     }
+
+
 
 }

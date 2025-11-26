@@ -1,5 +1,6 @@
 package org.example.medical_clinic_management_system.repository.person;
 
+import org.example.medical_clinic_management_system.model.person.Employee;
 import org.example.medical_clinic_management_system.model.person.MedicalStaff;
 import org.example.medical_clinic_management_system.model.person.MedicalStaff.Profession;
 import org.example.medical_clinic_management_system.model.person.User;
@@ -12,7 +13,7 @@ import java.util.Optional;
 public interface MedicalStaffRepository extends JpaRepository<MedicalStaff, Long>
 {
 
-    Optional<MedicalStaff> findByUser(User user);
+    Optional<MedicalStaff> findByEmployee(Employee employee);
 
     Optional<MedicalStaff> findByWorkPhone(String workPhone);
 

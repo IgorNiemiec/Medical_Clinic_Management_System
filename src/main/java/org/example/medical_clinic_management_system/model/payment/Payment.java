@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.medical_clinic_management_system.model.visit.Appointment;
+import org.example.medical_clinic_management_system.repository.payment.InvoiceRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -23,37 +24,31 @@ public class Payment
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "appointment_id", nullable = false)
-    private Appointment appointment;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_id", nullable = false)
+    private Invoice invoice;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(name = "amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @Column(nullable = false)
-    private LocalDateTime date;
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_method", nullable = false)
+    @Column(name = "payment_method", nullable = false, length = 50)
     private PaymentMethod paymentMethod;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Status status;
+    @Column(name = "payment_date_time", nullable = false)
+    private LocalDateTime paymentDateTime;
 
-    @Column(length = 50, nullable = false, unique = true)
-    private String transactionNumber;
+    @Column(name = "transaction_reference", length = 100)
+    private String transactionReference;
+
+
 
     public enum PaymentMethod {
         CASH,
         CARD,
-        TRANSFER
-    }
-
-    public enum Status {
-        COMPLETED,
-        PENDING,
-        FAILED
+        BANK_TRANSFER,
+        BLIK,
+        INSURANCE
     }
 
 
