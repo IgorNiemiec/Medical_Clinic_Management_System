@@ -4,7 +4,6 @@ package org.example.medical_clinic_management_system.controller.medicalService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.medical_clinic_management_system.dto.medicalService.MedicalServiceDetailsDto;
-import org.example.medical_clinic_management_system.dto.medicalService.MedicalServiceDto;
 import org.example.medical_clinic_management_system.dto.medicalService.MedicalServiceRequestDto;
 import org.example.medical_clinic_management_system.service.medicalService.MedicalServiceService;
 import org.springframework.http.HttpStatus;

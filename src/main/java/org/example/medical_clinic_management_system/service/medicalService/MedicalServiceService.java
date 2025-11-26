@@ -3,7 +3,6 @@ package org.example.medical_clinic_management_system.service.medicalService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.medical_clinic_management_system.dto.medicalService.MedicalServiceDetailsDto;
-import org.example.medical_clinic_management_system.dto.medicalService.MedicalServiceDto;
 import org.example.medical_clinic_management_system.dto.medicalService.MedicalServiceRequestDto;
 import org.example.medical_clinic_management_system.mapper.medicalService.MedicalServiceMapper;
 import org.example.medical_clinic_management_system.model.medicalService.MedicalService;
@@ -11,7 +10,6 @@ import org.example.medical_clinic_management_system.repository.medicalService.Me
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

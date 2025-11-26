@@ -1,7 +1,6 @@
 package org.example.medical_clinic_management_system.mapper.medicalService;
 
 import org.example.medical_clinic_management_system.dto.medicalService.MedicalServiceDetailsDto;
-import org.example.medical_clinic_management_system.dto.medicalService.MedicalServiceDto;
 import org.example.medical_clinic_management_system.dto.medicalService.MedicalServiceRequestDto;
 import org.example.medical_clinic_management_system.model.medicalService.MedicalService;
 import org.springframework.stereotype.Component;

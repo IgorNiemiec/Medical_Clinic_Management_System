@@ -1,4 +1,4 @@
-Medical Clinic Management System
+# Medical Clinic Management System
 
 ## Project Overview
 
@@ -10,80 +10,79 @@ Its primary objective is to centralize user data, efficiently organize appointme
 
 The system offers comprehensive functionalities to manage a modern medical clinic:
 
-* **Patient Management:** Enables the storage of detailed patient data (including PESEL/ID, address, visit history).
-* **Staff Scheduling:** Management of medical staff schedules, considering their specializations and availability.
-* **Appointment & Room Assignment:** Efficient organization and assignment of appointments to specific examination rooms based on their availability and intended use.
-* **Secure Data Storage:** Secure storage of all information in compliance with legal and privacy requirements.
-* **Automated Payments:** The platform automates the payment process by registering transactions, generating unique operation numbers, and tracking their status.
-
+- **Patient Management:** Enables the storage of detailed patient data (including PESEL/ID, address, visit history).
+- **Staff Scheduling:** Management of medical staff schedules, considering their specializations and availability.
+- **Appointment & Room Assignment:** Efficient organization and assignment of appointments to specific examination rooms based on their availability and intended use.
+- **Secure Data Storage:** Secure storage of all information in compliance with legal and privacy requirements.
+- **Automated Payments:** Automates the payment process by registering transactions, generating unique operation numbers, and tracking their status.
 
 ## Technologies Used
 
 The project is built using the following core technologies (assuming typical Java stack):
 
+- **Language:** Java  
+- **Framework:** Spring Boot  
+- **Data Access:** Spring Data JPA  
+- **Web:** Spring Web  
+- **Utility:** Lombok  
+- **Deployment:** Docker Compose  
+- **Build Tool:** Maven  
 
-* **Language:** Java
-* **Framework:** **Spring Boot**
-* **Data Access:** **Spring Data JPA**
-* **Web:** **Spring Web**
-* **Web:** **Spring Web**
-* **Utility:** **Lombok**
-* **Deployment:** **Docker Compose** 
-* **Build Tool:** **Maven**
+## Essential Database Tables
 
+- **User:** Base entity for all individuals accessing the system.  
+  *Role:* Authentication and identification details.  
 
-## Essential Database Tables for the System
+- **Employee:** Supertype for all clinic staff.  
+  *Role:* Stores common employee information (e.g., hiring date, contact).  
 
-* **User:** The base entity for all individuals accessing the system. It contains core authentication and identification details.
-   **Role:** Authentication and authorization management.
+- **MedicalStaff:** Subtype for clinical personnel (Doctors, Nurses, Assistants).  
+  *Role:* Clinical functions, prescription and diagnosis.  
 
-* **Employee:** The supertype for all clinic staff. It abstracts common employment data.
-   **Role:** Stores common employee information (e.g., hiring date, contact).
+- **Receptionist:** Subtype for administrative personnel.  
+  *Role:* Administrative tasks, scheduling, booking, payment processing, and patient registration.  
 
-* **MedicalStaff:** The subtype for clinical personnel (Doctors, Nurses, Assistants). They are responsible for patient care, diagnoses, and procedures.
-    **Role:** Clinical functions, prescription and diagnosis
+- **Schedule:** Defines working hours, on-call periods, or other time commitments for MedicalStaff.  
+  *Role:* Resource planning and availability management.  
 
-* **Receptionist:** The subtype for administrative personnel. They manage non-clinical operational tasks.
-    **Role:** Administrative tasks, scheduling, booking, payment processing, and patient registration.
+- **ExaminationRoom:** Catalog of physical locations/rooms within the clinic.  
+  *Role:* Asset management.  
 
-* **Schedule:** Defines the working hours, on-call periods, or other time commitments for MedicalStaff.
-    **Role:** Resource planning and availability management.
+- **Appointment:** Represents a scheduled patient visit with a staff member in a specific room at a specific time.  
+  *Role:* Core operational unit, linked to all services, notes, and payments.  
 
-* **ExaminationRoom:** The catalog of physical locations/rooms within the clinic.
-    **Role:** Asset management
+- **MedicalService:** Catalog of all billable medical procedures, consultations, or tests offered by the clinic.  
+  *Role:* Defines the standard price and scope of services.  
 
-* **Appointment:** Represents a scheduled patient visit with a staff member in a specific room at a specific time.
-    **Role:** Core operational unit, linked to all services, notes, and payments.
+- **AppointmentService:** Records services rendered during an Appointment.  
+  *Role:* Basis for invoicing and financial tracking.  
 
-* **MedicalService** The catalog of all billable medical procedures, consultations, or tests offered by the clinic.
-    **Role:** Defines the standard price and scope of services.
-   
-* **AppointmentService** The intermediary entity that records services actually rendered during an Appointment. It is the basis for invoicing.
-    **Role:** Financial tracking and breakdown of services.
+- **Payment:** Records transaction details for an Appointment.  
+  *Role:* Financial accounting and payment tracking.  
 
-* **Payment** Records the transaction details for an Appointment. The amount is derived from the sum of associated AppointmentService entries.
-    **Role:** Financial accounting and payment tracking.
+- **Patient:** Represents a client of the clinic.  
+  *Role:* Core patient identity data.  
 
-* **Patient** Represents a client of the clinic. The entity is linked to a system User (if they have portal access) and their medical history.
-    **Role:** Core patient identity data.
+- **PatientCard:** Central medical record for a single patient.  
+  *Role:* Container for all clinical history.  
 
-* **PatientCard** The central medical record for a single patient.
-    **Role:** Acts as the parent container for all clinical history.
+- **ICD_Code:** Catalog of officially recognized diseases and conditions (ICD-10).  
+  *Role:* Formal diagnosis and reporting.  
 
-* **ICD_Code** The catalog of officially recognized diseases and conditions, based on standard classifications ICD-10.
-    **Role:** Formal diagnosis and reporting.
+- **DiseaseCourse:** Records a specific diagnosis and its progression for a patient.  
+  *Role:* Clinical history tracking.  
 
-* **DiseaseCourse** Records a specific diagnosis and its progression for a patient, linking the condition to an official ICD_Code.
-    **Role:** Clinical history tracking.
+- **MedicalNote:** Documentation created during or after a patient visit.  
+  *Role:* Detailed patient-physician interactions and findings.  
 
-* **MedicalNote** Records all documentation created during or after a patient visit.
-    **Role:** Detailed documentation of patient-physician interactions and findings.
+- **Drug:** Catalog of officially registered medicinal products.  
+  *Role:* Accurate identification of medications.  
 
-* **Drug** The catalog of officially registered medicinal products, sourced from official governmental registers (e.g., ezdrowie.gov.pl).
-    **Role:** Formal and accurate identification of medications.
+- **Prescription:** Records the formal issuance of a medication to a patient.  
+  *Role:* Documentation of medication orders.  
 
-* **Prescription** Records the formal issuance of a medication to a patient by a certified staff member.
-    **Role:** Formal documentation of medication orders.
+## Database Diagram
 
+The following diagram illustrates the database schema, including all tables and their relationships:
 
-
+![Database Diagram](mcms_1.png)
