@@ -13,19 +13,10 @@ import java.util.Optional;
 public interface MedicalStaffRepository extends JpaRepository<MedicalStaff, Long>
 {
 
-    Optional<MedicalStaff> findByEmployee(Employee employee);
+    Optional<MedicalStaff> findByLicenseNumber(String licenseNumber);
 
-    Optional<MedicalStaff> findByWorkPhone(String workPhone);
+    boolean existsByLicenseNumberAndIdNot(String licenseNumber, Long id);
 
-    List<MedicalStaff> findByAvailableTrue();
-
-    List<MedicalStaff> findByProfession(Profession profession);
-
-    List<MedicalStaff> findByProfessionAndAvailableTrue(Profession profession);
-
-    List<MedicalStaff> findByEmploymentDateAfter(LocalDate date);
-
-    List<MedicalStaff> findByEmploymentDateBefore(LocalDate date);
-
+    Optional<MedicalStaff> findByEmployeeId(Long employeeId);
 
 }
