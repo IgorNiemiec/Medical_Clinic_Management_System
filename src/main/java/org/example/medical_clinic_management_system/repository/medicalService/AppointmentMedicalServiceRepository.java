@@ -15,6 +15,8 @@ public interface AppointmentMedicalServiceRepository extends JpaRepository<Appoi
 
     List<AppointmentMedicalService> findByAppointmentId(Long appointmentId);
 
+    List<AppointmentMedicalService> findByInvoiceId(Long invoiceId);
+
     @Query("SELECT COALESCE(SUM(ams.priceAtTime * ams.quantity), 0.00) " +
             "FROM AppointmentMedicalService ams " +
             "WHERE ams.appointment.id = :appointmentId")

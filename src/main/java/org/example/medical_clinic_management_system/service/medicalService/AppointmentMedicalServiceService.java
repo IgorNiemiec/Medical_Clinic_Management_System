@@ -96,12 +96,24 @@ public class AppointmentMedicalServiceService
     }
 
 
+
     @Transactional
     public void deleteAppointmentService(Long id) {
         if (!appointmentMedicalServiceRepository.existsById(id)) {
             throw new RuntimeException("Pozycja Usługi Wizyty");
         }
         appointmentMedicalServiceRepository.deleteById(id);
+    }
+
+    @Transactional
+    public List<AppointmentMedicalServiceDetailsDto> getServicesByInvoiceId(Long invoiceId) {
+        List<AppointmentMedicalService> services = appointmentMedicalServiceRepository.findByInvoiceId(invoiceId);
+
+        if (services.isEmpty() && !invoiceRepository.existsById(invoiceId)) {
+            throw new RuntimeException("Invoice");
+        }
+
+        return appointmentMedicalServiceMapper.toDetailsDtoList(services);
     }
 
 

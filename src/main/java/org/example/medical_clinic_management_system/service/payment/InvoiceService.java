@@ -11,6 +11,9 @@ import org.example.medical_clinic_management_system.model.person.Patient;
 import org.example.medical_clinic_management_system.repository.medicalService.AppointmentMedicalServiceRepository;
 import org.example.medical_clinic_management_system.repository.payment.InvoiceRepository;
 import org.example.medical_clinic_management_system.repository.person.PatientRepository;
+import org.example.medical_clinic_management_system.xml.dto.InvoiceItemXmlDto;
+import org.example.medical_clinic_management_system.xml.dto.InvoiceXmlDto;
+import org.example.medical_clinic_management_system.xml.service.XmlService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,6 +21,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +32,9 @@ public class InvoiceService
     private final PatientRepository patientRepository;
     private final AppointmentMedicalServiceRepository amsRepository;
     private final InvoiceMapper invoiceMapper;
+    private final XmlService xmlService;
+
+    private static final String INVOICE_NOT_FOUND = "Invoice not found with ID: ";
 
 
     @Transactional
@@ -104,9 +111,6 @@ public class InvoiceService
         Invoice invoice = invoiceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Faktura"));
 
-        // Tutaj można dodać logikę walidacyjną przejścia statusów, np.
-        // Fakturę wystawioną można tylko opłacić lub anulować.
-        // Nie można przejść ze statusu ANULOWANA na OPŁACONA.
 
         invoice.setStatus(newStatus);
         Invoice updatedInvoice = invoiceRepository.save(invoice);
@@ -118,9 +122,10 @@ public class InvoiceService
         BigDecimal totalGross = BigDecimal.ZERO;
 
         for (AppointmentMedicalService item : items) {
-            totalNet = totalNet.add(item.getNetPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+            BigDecimal itemNetValue = item.getPriceAtTime().multiply(new BigDecimal(item.getQuantity()));
 
-            totalGross = totalGross.add(item.getGrossPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+            totalNet = totalNet.add(itemNetValue);
+            totalGross = totalGross.add(itemNetValue);
         }
 
         return new BigDecimal[]{
@@ -129,12 +134,68 @@ public class InvoiceService
         };
     }
 
+    public BigDecimal calculateTotalGross(List<AppointmentMedicalService> items) {
+        return calculateTotals(items)[1];
+    }
+
     private String generateNextInvoiceNumber() {
         long currentCount = invoiceRepository.count();
         String sequentialNumber = String.format("%04d", currentCount + 1);
         String datePart = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM"));
 
         return datePart + "/" + sequentialNumber;
+    }
+
+
+    private InvoiceXmlDto mapToInvoiceXmlDto(Invoice invoice) {
+        List<AppointmentMedicalService> services = invoice.getItems() != null && !invoice.getItems().isEmpty()
+                ? invoice.getItems()
+                : amsRepository.findByInvoiceId(invoice.getId());
+
+
+        List<InvoiceItemXmlDto> items = services.stream().map(service -> {
+
+            BigDecimal netValue = service.getPriceAtTime().multiply(new BigDecimal(service.getQuantity()));
+
+            BigDecimal grossValue = netValue;
+
+            return InvoiceItemXmlDto.builder()
+                    .serviceTitle(service.getServiceTitleSnapshot() != null ? service.getServiceTitleSnapshot() : service.getMedicalService().getTitle())
+                    .quantity(service.getQuantity())
+                    .unitPrice(service.getPriceAtTime())
+                    .netValue(netValue.setScale(2, RoundingMode.HALF_UP))
+                    .grossValue(grossValue.setScale(2, RoundingMode.HALF_UP))
+                    .build();
+        }).collect(Collectors.toList());
+
+        BigDecimal totalGrossAmount = items.stream()
+                .map(InvoiceItemXmlDto::getGrossValue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return InvoiceXmlDto.builder()
+                .invoiceNumber(invoice.getInvoiceNumber())
+                .issueDate(invoice.getIssueDate().toLocalDate())
+                .dueDate(invoice.getDueDate().toLocalDate())
+                .payerName(invoice.getPayerName())
+                .payerAddress(invoice.getPayerAddress())
+                .payerNip(invoice.getPayerNip())
+                .totalGrossAmount(totalGrossAmount)
+                .items(items)
+                .build();
+    }
+
+    @Transactional
+    public String exportInvoiceToXml(Long invoiceId) {
+        Invoice invoice = invoiceRepository.findById(invoiceId)
+                .orElseThrow(() -> new RuntimeException(INVOICE_NOT_FOUND + invoiceId));
+
+        InvoiceXmlDto xmlDto = mapToInvoiceXmlDto(invoice);
+
+        return xmlService.marshalInvoiceToXml(xmlDto);
+    }
+
+    public InvoiceXmlDto importInvoiceFromXml(String xmlContent) {
+        return xmlService.unmarshalInvoiceFromXml(xmlContent);
     }
 
 

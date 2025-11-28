@@ -6,7 +6,10 @@ import org.example.medical_clinic_management_system.dto.payment.InvoiceDetailsDt
 import org.example.medical_clinic_management_system.dto.payment.InvoiceRequestDto;
 import org.example.medical_clinic_management_system.model.payment.Invoice;
 import org.example.medical_clinic_management_system.service.payment.InvoiceService;
+import org.example.medical_clinic_management_system.xml.dto.InvoiceXmlDto;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,6 +50,26 @@ public class InvoiceController
         InvoiceDetailsDto updatedInvoice = invoiceService.updateInvoiceStatus(id, newStatus);
         return ResponseEntity.ok(updatedInvoice);
     }
+
+
+    @GetMapping("/{id}/export-xml")
+    public ResponseEntity<String> exportInvoiceXml(@PathVariable Long id) {
+        String xmlContent = invoiceService.exportInvoiceToXml(id);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_XML);
+        // Zmieniona nazwa pliku na angielski
+        headers.setContentDispositionFormData("attachment", "invoice_" + id + ".xml");
+
+        return new ResponseEntity<>(xmlContent, headers, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/import-xml", consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<InvoiceXmlDto> importInvoiceXml(@RequestBody String xmlContent) {
+        InvoiceXmlDto importedDto = invoiceService.importInvoiceFromXml(xmlContent);
+        return ResponseEntity.ok(importedDto);
+    }
+
 
 
 

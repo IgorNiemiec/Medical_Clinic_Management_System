@@ -44,6 +44,12 @@ public class AppointmentMedicalServiceController
         return ResponseEntity.ok(totalCost);
     }
 
+    @GetMapping("/invoice/{invoiceId}")
+    public ResponseEntity<List<AppointmentMedicalServiceDetailsDto>> getServicesByInvoiceId(@PathVariable Long invoiceId) {
+        List<AppointmentMedicalServiceDetailsDto> services = appointmentMedicalServiceService.getServicesByInvoiceId(invoiceId);
+        return ResponseEntity.ok(services);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAppointmentService(@PathVariable Long id) {
         appointmentMedicalServiceService.deleteAppointmentService(id);
