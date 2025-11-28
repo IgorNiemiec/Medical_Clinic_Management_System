@@ -1,7 +1,6 @@
 package org.example.medical_clinic_management_system.repository.person;
 
 import org.example.medical_clinic_management_system.model.person.User;
-import org.example.medical_clinic_management_system.model.person.User.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,5 +15,6 @@ public interface UserRepository extends JpaRepository<User, Long>
     Optional<User> findByEmail(String email);
 
     boolean existsByEmail(String email);
+
 
 }
