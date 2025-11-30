@@ -9,6 +9,7 @@ import org.example.medical_clinic_management_system.dto.person.PatientRequestDto
 import org.example.medical_clinic_management_system.service.person.PatientService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class PatientController
 
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<PatientDetailsDto> registerPatient(@Valid @RequestBody PatientRequestDto requestDto) {
         PatientDetailsDto newPatient = patientService.registerPatient(requestDto);
         return new ResponseEntity<>(newPatient, HttpStatus.CREATED);
@@ -30,18 +32,21 @@ public class PatientController
 
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<List<PatientListItemDto>> getAllPatients() {
         List<PatientListItemDto> patients = patientService.getAllPatients();
         return ResponseEntity.ok(patients);
     }
 
     @GetMapping("/{patientId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<PatientDetailsDto> getPatientById(@PathVariable Long patientId) {
         PatientDetailsDto patient = patientService.getPatientById(patientId);
         return ResponseEntity.ok(patient);
     }
 
     @GetMapping("/search")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<PatientDetailsDto> getPatientByPesel(@RequestParam String pesel) {
 
         PatientDetailsDto patient = patientService.getPatientByPesel(pesel);
@@ -49,6 +54,7 @@ public class PatientController
     }
 
     @PutMapping("/{patientId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<PatientDetailsDto> updatePatient(@PathVariable Long patientId,
                                                            @Valid @RequestBody PatientRequestDto requestDto) {
         PatientDetailsDto updatedPatient = patientService.updatePatient(patientId, requestDto);
@@ -56,6 +62,7 @@ public class PatientController
     }
 
     @DeleteMapping("/{patientId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<Void> deletePatient(@PathVariable Long patientId) {
         patientService.deletePatient(patientId);
         return ResponseEntity.noContent().build();

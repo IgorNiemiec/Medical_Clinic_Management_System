@@ -7,6 +7,7 @@ import org.example.medical_clinic_management_system.dto.pharmacy.PrescriptionReq
 import org.example.medical_clinic_management_system.service.pharmacy.PrescriptionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,30 +21,35 @@ public class PrescriptionController {
 
 
     @PostMapping
+    @PreAuthorize("hasRole('DOCTOR') or hasRole('ADMIN')")
     public ResponseEntity<PrescriptionDetailsDto> createPrescription(@Valid @RequestBody PrescriptionRequestDto requestDto) {
         PrescriptionDetailsDto newPrescription = prescriptionService.createPrescription(requestDto);
         return new ResponseEntity<>(newPrescription, HttpStatus.CREATED);
     }
 
     @GetMapping("/{prescriptionId}")
+    @PreAuthorize("hasRole('DOCTOR') or hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<PrescriptionDetailsDto> getPrescriptionById(@PathVariable Long prescriptionId) {
         PrescriptionDetailsDto prescription = prescriptionService.getPrescriptionById(prescriptionId);
         return ResponseEntity.ok(prescription);
     }
 
     @GetMapping("/patient/{patientId}")
+    @PreAuthorize("hasRole('DOCTOR') or hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<List<PrescriptionDetailsDto>> getPrescriptionsByPatient(@PathVariable Long patientId) {
         List<PrescriptionDetailsDto> prescriptions = prescriptionService.getPrescriptionsByPatient(patientId);
         return ResponseEntity.ok(prescriptions);
     }
 
     @GetMapping("/doctor/{doctorId}")
+    @PreAuthorize("hasRole('DOCTOR') or hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<List<PrescriptionDetailsDto>> getPrescriptionsByDoctor(@PathVariable Long doctorId) {
         List<PrescriptionDetailsDto> prescriptions = prescriptionService.getPrescriptionsByDoctor(doctorId);
         return ResponseEntity.ok(prescriptions);
     }
 
     @DeleteMapping("/{prescriptionId}")
+    @PreAuthorize("hasRole('DOCTOR') or hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<Void> deletePrescription(@PathVariable Long prescriptionId) {
         prescriptionService.deletePrescription(prescriptionId);
         return ResponseEntity.noContent().build();

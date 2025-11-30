@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,24 +26,28 @@ public class InvoiceController
 
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<InvoiceDetailsDto> generateInvoice(@Valid @RequestBody InvoiceRequestDto requestDto) {
         InvoiceDetailsDto newInvoice = invoiceService.generateInvoice(requestDto);
         return new ResponseEntity<>(newInvoice, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<InvoiceDetailsDto> getInvoiceById(@PathVariable Long id) {
         InvoiceDetailsDto invoice = invoiceService.getInvoiceById(id);
         return ResponseEntity.ok(invoice);
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<List<InvoiceDetailsDto>> getAllInvoices() {
         List<InvoiceDetailsDto> invoices = invoiceService.getAllInvoices();
         return ResponseEntity.ok(invoices);
     }
 
     @PutMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<InvoiceDetailsDto> updateInvoiceStatus(
             @PathVariable Long id,
             @RequestParam Invoice.InvoiceStatus newStatus) {
@@ -53,6 +58,7 @@ public class InvoiceController
 
 
     @GetMapping("/{id}/export-xml")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<String> exportInvoiceXml(@PathVariable Long id) {
         String xmlContent = invoiceService.exportInvoiceToXml(id);
 
@@ -65,6 +71,7 @@ public class InvoiceController
     }
 
     @PostMapping(value = "/import-xml", consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<InvoiceXmlDto> importInvoiceXml(@RequestBody String xmlContent) {
         InvoiceXmlDto importedDto = invoiceService.importInvoiceFromXml(xmlContent);
         return ResponseEntity.ok(importedDto);

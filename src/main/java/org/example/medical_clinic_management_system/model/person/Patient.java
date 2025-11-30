@@ -18,9 +18,6 @@ public class Patient
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Relacja OneToOne z User - dane osobowe pacjenta
-    // Używamy @MapsId, aby id encji Patient było jednocześnie id encji User
-    // W naszym przypadku, zgodnie ze schematem, to jest prosta relacja OneToOne
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

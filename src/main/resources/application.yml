@@ -11,6 +11,9 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+    sql:
+      init:
+        mode: always
 jwt:
   secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktcHJvZmVzc2lvbmFsLWtsaW5pa2EtdG9rZW4tc2VjcmV0LWtleS12ZXJ5LXN0cm9uZ2x5
   expiration:
