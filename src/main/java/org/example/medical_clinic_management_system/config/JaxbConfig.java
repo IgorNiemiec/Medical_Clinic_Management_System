@@ -1,5 +1,6 @@
 package org.example.medical_clinic_management_system.config;
 
+import org.example.medical_clinic_management_system.xml.dto.InvoiceXmlDto;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -23,12 +24,14 @@ import java.util.List;
 public class JaxbConfig implements WebMvcConfigurer
 {
 
-    private static final String JAXB_CONTEXT_PATH = "org.example.medical_clinic_management_system.dto.xml";
 
     @Bean
     public Jaxb2Marshaller jaxb2Marshaller() {
         Jaxb2Marshaller m = new Jaxb2Marshaller();
-        m.setContextPath(JAXB_CONTEXT_PATH);
+
+
+        m.setClassesToBeBound(InvoiceXmlDto.class);
+
         m.setSupportJaxbElementClass(true);
         return m;
     }
@@ -38,6 +41,7 @@ public class JaxbConfig implements WebMvcConfigurer
     {
         return new MarshallingHttpMessageConverter(marshaller, marshaller);
     }
+
 
 
 }

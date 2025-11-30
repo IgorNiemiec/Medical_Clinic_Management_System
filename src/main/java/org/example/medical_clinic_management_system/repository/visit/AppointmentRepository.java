@@ -35,5 +35,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>
 
     List<Appointment> findByDateBeforeAndStatus(LocalDate date, Appointment.AppointmentStatus status);
 
-    BigDecimal calculateTotalCostForAppointment(Long AppointmentId);
+    @Query("SELECT SUM(ams.medicalService.price) FROM AppointmentMedicalService ams WHERE ams.appointment.id = :appointmentId")
+    BigDecimal calculateTotalCostForAppointment(@Param("appointmentId") Long appointmentId);
+
 }

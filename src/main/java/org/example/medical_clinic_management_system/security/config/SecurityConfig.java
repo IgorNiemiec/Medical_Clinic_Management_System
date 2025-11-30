@@ -29,7 +29,10 @@ public class SecurityConfig
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encodedPassword = encoder.encode("password");
+        System.out.println("Nowy poprawny hash dla 'password': " + encodedPassword);
+        return  encoder;
     }
 
     @Bean
@@ -53,8 +56,10 @@ public class SecurityConfig
 
 
                 .authorizeHttpRequests(auth -> auth
+
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+
                         .anyRequest().authenticated()
                 );
 

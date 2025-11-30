@@ -35,19 +35,46 @@ public class AuthController
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+        try
+        {
 
-        User userDetails = (User) authentication.getPrincipal();
+            System.out.println(loginRequest.getEmail() + " - " + loginRequest.getPassword());
 
-        String jwt = jwtUtil.generateToken(userDetails);
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
-        return ResponseEntity.ok(AuthResponse.builder()
-                .token(jwt)
-                .email(userDetails.getEmail()) // Używamy email
-                .role(userDetails.getRole().name())
-                .userId(userDetails.getId())
-                .build());
+            User userDetails = (User) authentication.getPrincipal();
+
+            String jwt = jwtUtil.generateToken(userDetails);
+
+            System.out.println("Zalogowano pomyślnie. Rola: " + authentication.getAuthorities());
+
+            return ResponseEntity.ok(AuthResponse.builder()
+                    .token(jwt)
+                    .email(userDetails.getEmail())
+                    .role(userDetails.getRole().name())
+                    .userId(userDetails.getId())
+                    .build());
+
+
+
+        }
+        catch (Exception e)
+        {
+
+            System.err.println(e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+
+
+
+
+
+
+
+
     }
 
 

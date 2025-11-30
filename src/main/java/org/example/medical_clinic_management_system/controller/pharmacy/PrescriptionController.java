@@ -23,35 +23,35 @@ public class PrescriptionController {
     @PostMapping
     @PreAuthorize("hasRole('DOCTOR') or hasRole('ADMIN')")
     public ResponseEntity<PrescriptionDetailsDto> createPrescription(@Valid @RequestBody PrescriptionRequestDto requestDto) {
-        PrescriptionDetailsDto newPrescription = prescriptionService.createPrescription(requestDto);
+        PrescriptionDetailsDto newPrescription = prescriptionService.create(requestDto);
         return new ResponseEntity<>(newPrescription, HttpStatus.CREATED);
     }
 
     @GetMapping("/{prescriptionId}")
     @PreAuthorize("hasRole('DOCTOR') or hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<PrescriptionDetailsDto> getPrescriptionById(@PathVariable Long prescriptionId) {
-        PrescriptionDetailsDto prescription = prescriptionService.getPrescriptionById(prescriptionId);
+        PrescriptionDetailsDto prescription = prescriptionService.findById(prescriptionId);
         return ResponseEntity.ok(prescription);
     }
 
     @GetMapping("/patient/{patientId}")
     @PreAuthorize("hasRole('DOCTOR') or hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<List<PrescriptionDetailsDto>> getPrescriptionsByPatient(@PathVariable Long patientId) {
-        List<PrescriptionDetailsDto> prescriptions = prescriptionService.getPrescriptionsByPatient(patientId);
+        List<PrescriptionDetailsDto> prescriptions = prescriptionService.findByPatient(patientId);
         return ResponseEntity.ok(prescriptions);
     }
 
     @GetMapping("/doctor/{doctorId}")
     @PreAuthorize("hasRole('DOCTOR') or hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<List<PrescriptionDetailsDto>> getPrescriptionsByDoctor(@PathVariable Long doctorId) {
-        List<PrescriptionDetailsDto> prescriptions = prescriptionService.getPrescriptionsByDoctor(doctorId);
+        List<PrescriptionDetailsDto> prescriptions = prescriptionService.findByDoctor(doctorId);
         return ResponseEntity.ok(prescriptions);
     }
 
     @DeleteMapping("/{prescriptionId}")
     @PreAuthorize("hasRole('DOCTOR') or hasRole('ADMIN') or hasRole('RECEPTIONIST')")
     public ResponseEntity<Void> deletePrescription(@PathVariable Long prescriptionId) {
-        prescriptionService.deletePrescription(prescriptionId);
+        prescriptionService.deleteById(prescriptionId);
         return ResponseEntity.noContent().build();
     }
 

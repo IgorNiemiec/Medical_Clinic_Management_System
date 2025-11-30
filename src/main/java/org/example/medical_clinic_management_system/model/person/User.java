@@ -36,7 +36,7 @@ public class User implements UserDetails
     @Column(length = 100, nullable = false, unique = true)
     private String email;
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 100, nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -56,7 +56,12 @@ public class User implements UserDetails
 
     @Override
     public String getUsername() {
-        return "";
+        return email;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
     }
 
     @Override

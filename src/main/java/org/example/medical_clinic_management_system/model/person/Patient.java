@@ -36,6 +36,7 @@ public class Patient
     private String pesel;
 
     @Column(nullable = false, length = 10)
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
 

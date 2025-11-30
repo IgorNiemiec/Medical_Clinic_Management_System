@@ -32,7 +32,7 @@ public class AuthService
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("Obecny użytkownik (" + userId + ") nie istnieje."));
 
-        return employeeRepository.findByUser(user.getId())
+        return employeeRepository.findByUser(user)
                 .orElseThrow(() -> new IllegalStateException("Obecny użytkownik (" + user.getEmail() + ") nie jest pracownikiem i nie może rejestrować pacjentów."));
     }
 

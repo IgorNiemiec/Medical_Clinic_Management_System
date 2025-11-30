@@ -3,7 +3,11 @@ package org.example.medical_clinic_management_system.tests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.medical_clinic_management_system.controller.auth.*;
-import org.example.medical_clinic_management_system.model.person.*;
+import org.example.medical_clinic_management_system.model.person.MedicalStaff;
+import org.example.medical_clinic_management_system.model.person.Patient;
+import org.example.medical_clinic_management_system.model.person.Receptionist;
+import org.example.medical_clinic_management_system.model.person.Role;
+import org.example.medical_clinic_management_system.model.person.User;
 import org.example.medical_clinic_management_system.security.jwt.JwtUtil;
 import org.example.medical_clinic_management_system.service.auth.AuthService;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +32,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity; // Dodano import springSecurity()
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,6 +43,7 @@ public class AuthControllerTest
 
     @Configuration
     public static class MockingConfig {
+        // Mockowanie serwisów używanych przez AuthController
         @Bean
         public AuthService authService() {
             return mock(AuthService.class);
@@ -56,6 +61,7 @@ public class AuthControllerTest
     }
 
 
+    // Wstrzykiwanie MockMvc jest standardowe, ale nadal potrzebujemy kontekstu
     @Autowired
     private MockMvc mockMvc;
 
@@ -71,11 +77,14 @@ public class AuthControllerTest
     @Autowired
     private JwtUtil jwtUtil;
 
+    // Pole WAC jest potrzebne do ręcznego budowania MockMvc z filtrami bezpieczeństwa
     @Autowired
     private WebApplicationContext context;
 
     @BeforeEach
     public void setup() {
+        // Ręczne budowanie MockMvc jest niezbędne, gdy @WebMvcTest ma problemy
+        // z poprawnym załadowaniem mapowań i filtrów bezpieczeństwa jednocześnie.
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(springSecurity())
@@ -89,6 +98,7 @@ public class AuthControllerTest
         final String TEST_EMAIL = "politechnika@klinika.pl";
         LoginRequest loginRequest = new LoginRequest(TEST_EMAIL, "politechnikaKlinika123");
 
+        // Konfiguracja UserDetails do zwrócenia przez AuthenticationManager
         User userDetails = User.builder()
                 .id(1L)
                 .email(TEST_EMAIL)
@@ -97,6 +107,7 @@ public class AuthControllerTest
         String expectedJwt = "mocked.jwt.token";
 
 
+        // Mockowanie AuthenticationManager
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
         when(jwtUtil.generateToken(userDetails)).thenReturn(expectedJwt);
@@ -107,15 +118,15 @@ public class AuthControllerTest
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
-                .andExpect((ResultMatcher) jsonPath("$.token").value(expectedJwt))
-                .andExpect((ResultMatcher) jsonPath("$.email").value(TEST_EMAIL))
-                .andExpect((ResultMatcher) jsonPath("$.role").value(Role.ROLE_ADMIN.name()))
-                .andExpect((ResultMatcher) jsonPath("$.userId").value(1L));
+                .andExpect(jsonPath("$.token").value(expectedJwt))
+                .andExpect(jsonPath("$.email").value(TEST_EMAIL))
+                .andExpect(jsonPath("$.role").value(Role.ROLE_ADMIN.name()))
+                .andExpect(jsonPath("$.userId").value(1L));
     }
 
 
     @Test
-    @WithMockUser(roles = "RECEPTIONIST", username = "recepcjonista@klinika.pl", authorities = "ROLE_RECEPTIONIST")
+    @WithMockUser(roles = "RECEPTIONIST", username = "recepcjonista@klinika.pl")
     void registerPatient_AsReceptionist_Success() throws Exception {
 
         PatientRegisterRequest request = new PatientRegisterRequest("Jan", "Kowalski", "jan@test.pl", "haslo123", "12345678901", LocalDate.of(1990, 1, 1), "Adres", "500100200", Patient.Gender.MALE);
@@ -140,7 +151,7 @@ public class AuthControllerTest
 
         PatientRegisterRequest request = new PatientRegisterRequest("Jan", "Kowalski", "jan@test.pl", "haslo123", "12345678901", LocalDate.of(1990, 1, 1), "Adres", "500100200", Patient.Gender.MALE);
 
-
+        // Oczekujemy 401, ponieważ nie ma @WithMockUser
         mockMvc.perform(post("/api/auth/register/patient")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -179,7 +190,6 @@ public class AuthControllerTest
                 .thenReturn(mockStaff);
 
 
-
         mockMvc.perform(post("/api/auth/register/medicalstaff")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -189,13 +199,12 @@ public class AuthControllerTest
 
 
     @Test
-    @WithMockUser(roles = "USER")
+    @WithMockUser(roles = "RECEPTIONIST")
     void registerMedicalStaff_AsUnauthorizedUser_ReturnsForbidden() throws Exception {
 
         DoctorRegisterRequest request = new DoctorRegisterRequest("Anna", "Nowak", "anna@lekarz.pl", "pass2024", "111222333", MedicalStaff.Profession.DOCTOR);
 
 
-        // ACT & ASSERT
         mockMvc.perform(post("/api/auth/register/medicalstaff")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -236,8 +245,4 @@ public class AuthControllerTest
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isForbidden());
     }
-
-
-
-
 }
