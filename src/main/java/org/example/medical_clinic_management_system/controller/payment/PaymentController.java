@@ -3,7 +3,6 @@ package org.example.medical_clinic_management_system.controller.payment;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.medical_clinic_management_system.dto.payment.PaymentDetailsDto;
-import org.example.medical_clinic_management_system.dto.payment.PaymentDto;
 import org.example.medical_clinic_management_system.dto.payment.PaymentRequestDto;
 import org.example.medical_clinic_management_system.service.payment.PaymentService;
 import org.springframework.http.HttpStatus;

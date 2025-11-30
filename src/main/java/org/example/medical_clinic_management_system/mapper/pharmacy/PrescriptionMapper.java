@@ -36,8 +36,8 @@ public class PrescriptionMapper
         MedicalStaff doctor = entity.getDoctor();
         dto.setDoctorId(doctor.getId());
 
-        // Tutaj na przyszlosc do zrobienia (Doktor nie może się odwołać do nazwy)
-         dto.setDoctorFullName(entity.getDoctor().getLicenseNumber());
+
+         dto.setDoctorFullName(entity.getDoctor().getEmployee().getUser().getFirstName() + " " + entity.getDoctor().getEmployee().getUser().getSurname());
 
 
         Drug drug = entity.getDrug();

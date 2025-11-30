@@ -39,7 +39,7 @@ public class XmlService
             marshaller.marshal(invoiceXmlDto, sw);
             return sw.toString();
         } catch (JAXBException e) {
-            log.error("XML Marshalling failed for Invoice ID: {}", invoiceXmlDto.getInvoiceId(), e);
+            log.error("XML Marshalling failed for Invoice ID: {}", invoiceXmlDto.getInvoiceNumber(), e);
             throw new RuntimeException("marshalling.failed", e);
         }
     }

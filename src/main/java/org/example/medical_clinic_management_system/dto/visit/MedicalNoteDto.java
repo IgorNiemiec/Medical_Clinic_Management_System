@@ -3,7 +3,7 @@ package org.example.medical_clinic_management_system.dto.visit;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
-import org.example.medical_clinic_management_system.model.visit.MedicalNote.NoteType;
+import org.example.medical_clinic_management_system.model.visit.MedicalNote;
 
 import java.time.LocalDate;
 
@@ -25,4 +25,11 @@ public class MedicalNoteDto {
 
     @NotNull(message = "{validation.medicalNote.type.notNull}")
     private NoteType type;
+
+    public enum NoteType
+    {
+        SHORT,
+        LONG
+    }
+
 }

@@ -1,7 +1,6 @@
 package org.example.medical_clinic_management_system.mapper.visit;
 
 import org.example.medical_clinic_management_system.dto.visit.ExaminationRoomDetailsDto;
-import org.example.medical_clinic_management_system.dto.visit.ExaminationRoomDto;
 import org.example.medical_clinic_management_system.dto.visit.ExaminationRoomRequestDto;
 import org.example.medical_clinic_management_system.model.visit.ExaminationRoom;
 import org.springframework.stereotype.Component;

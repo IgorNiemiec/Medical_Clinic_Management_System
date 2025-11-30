@@ -2,14 +2,11 @@ package org.example.medical_clinic_management_system.service.payment;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.example.medical_clinic_management_system.dto.payment.InvoiceDetailsDto;
 import org.example.medical_clinic_management_system.dto.payment.PaymentDetailsDto;
-import org.example.medical_clinic_management_system.dto.payment.PaymentDto;
 import org.example.medical_clinic_management_system.dto.payment.PaymentRequestDto;
 import org.example.medical_clinic_management_system.mapper.payment.PaymentMapper;
 import org.example.medical_clinic_management_system.model.payment.Invoice;
 import org.example.medical_clinic_management_system.model.payment.Payment;
-import org.example.medical_clinic_management_system.model.visit.Appointment;
 import org.example.medical_clinic_management_system.repository.payment.InvoiceRepository;
 import org.example.medical_clinic_management_system.repository.payment.PaymentRepository;
 import org.example.medical_clinic_management_system.repository.visit.AppointmentRepository;
@@ -20,7 +17,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

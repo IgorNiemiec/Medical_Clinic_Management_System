@@ -2,7 +2,7 @@ package org.example.medical_clinic_management_system.dto.person;
 
 import lombok.Data;
 import jakarta.validation.constraints.*;
-import org.example.medical_clinic_management_system.model.person.User.Role;
+import org.example.medical_clinic_management_system.model.person.Role;
 
 import java.time.LocalDateTime;
 

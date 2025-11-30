@@ -1,7 +1,6 @@
 package org.example.medical_clinic_management_system.mapper.payment;
 
 import org.example.medical_clinic_management_system.dto.payment.PaymentDetailsDto;
-import org.example.medical_clinic_management_system.dto.payment.PaymentDto;
 import org.example.medical_clinic_management_system.model.payment.Payment;
 import org.springframework.stereotype.Component;
 

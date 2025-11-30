@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
+import org.example.medical_clinic_management_system.model.pharmacy.Drug;
 
 import java.time.LocalDate;
 

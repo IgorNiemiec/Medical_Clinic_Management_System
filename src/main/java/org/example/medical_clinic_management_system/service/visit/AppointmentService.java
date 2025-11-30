@@ -21,11 +21,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class AppointmentService extends org.example.medical_clinic_management_system.model.medicalService.AppointmentService {
+public class AppointmentService
+{
 
     private static final int APPOINTMENT_DURATION_MINUTES = 30;
 
-    private final AppointmentServiceRepository appointmentServiceRepository;
+
     private final AppointmentRepository appointmentRepository;
     private final AppointmentMapper appointmentMapper;
 
@@ -98,7 +99,7 @@ public class AppointmentService extends org.example.medical_clinic_management_sy
 
     @Transactional
     public List<AppointmentDetailsDto> getStaffScheduleForDay(Long medicalStaffId, java.time.LocalDate date) {
-        // Walidacja istnienia personelu
+
         medicalStaffRepository.findById(medicalStaffId)
                 .orElseThrow(() -> new IllegalArgumentException("Personel medyczny o ID " + medicalStaffId + " nie istnieje."));
 
@@ -156,15 +157,15 @@ public class AppointmentService extends org.example.medical_clinic_management_sy
         if (!appointmentRepository.existsById(appointmentId)) {
             throw new RuntimeException("Wizyta");
         }
-        return appointmentServiceRepository.calculateTotalCostForAppointment(appointmentId);
+        return appointmentRepository.calculateTotalCostForAppointment(appointmentId);
     }
 
     @Transactional
     public void deleteAppointmentService(Long id) {
-        if (!appointmentServiceRepository.existsById(id)) {
+        if (!appointmentRepository.existsById(id)) {
             throw new RuntimeException("Pozycja Usługi Wizyty");
         }
-        appointmentServiceRepository.deleteById(id);
+        appointmentRepository.deleteById(id);
     }
 
 

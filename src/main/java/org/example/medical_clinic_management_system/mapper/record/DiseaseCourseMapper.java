@@ -40,7 +40,7 @@ public class DiseaseCourseMapper
         }
 
         if (entity.getMedicalStaff() != null) {
-            dto.setMedicalStaff(medicalStaffMapper.toDto(entity.getMedicalStaff()));
+            dto.setMedicalStaff(medicalStaffMapper.toDetailsDto((entity.getMedicalStaff())));
         }
 
         return dto;

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.example.medical_clinic_management_system.model.person.Role;
 import org.example.medical_clinic_management_system.model.person.User;
 
 
@@ -32,7 +33,7 @@ public class UserRequestDto
 
 
     @NotNull(message = "{validation.user.role.notNull}")
-    private User.Role role;
+    private Role role;
 
 
 

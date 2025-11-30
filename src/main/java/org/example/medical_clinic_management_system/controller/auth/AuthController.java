@@ -40,10 +40,8 @@ public class AuthController
 
         User userDetails = (User) authentication.getPrincipal();
 
-        // Generowanie tokena JWT
         String jwt = jwtUtil.generateToken(userDetails);
 
-        // Zwrócenie tokena i informacji o użytkowniku
         return ResponseEntity.ok(AuthResponse.builder()
                 .token(jwt)
                 .email(userDetails.getEmail()) // Używamy email
@@ -73,12 +71,12 @@ public class AuthController
 
 
     @PostMapping("/register/medicalstaff")
-    @PreAuthorize("hasRole('RECEPTIONIST') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MedicalStaff> registerDoctor(@Valid @RequestBody DoctorRegisterRequest request) {
         try
         {
-            MedicalStaff newDoctor = authService.registerDoctor(request);
-            return new ResponseEntity<>(newDoctor, HttpStatus.CREATED);
+            MedicalStaff newMedicalStaff = authService.registerMedicalStaff(request);
+            return new ResponseEntity<>(newMedicalStaff, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }

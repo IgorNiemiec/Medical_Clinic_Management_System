@@ -28,11 +28,12 @@ public class AuthService
 
     private Employee getEmployeeByUserId(Long userId)
     {
+
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("Obecny użytkownik nie istnieje."));
+                .orElseThrow(() -> new UsernameNotFoundException("Obecny użytkownik (" + userId + ") nie istnieje."));
 
         return employeeRepository.findByUser(user.getId())
-                .orElseThrow(() -> new IllegalStateException("Obecny użytkownik (" + user.getUsername() + ") nie jest pracownikiem i nie może rejestrować pacjentów."));
+                .orElseThrow(() -> new IllegalStateException("Obecny użytkownik (" + user.getEmail() + ") nie jest pracownikiem i nie może rejestrować pacjentów."));
     }
 
 
@@ -53,10 +54,12 @@ public class AuthService
 
 
         User newUser = User.builder()
+                .email(request.getEmail()) // POPRAWKA: Dodano email
                 .firstName(request.getFirstName())
                 .surname(request.getSurname())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.ROLE_PATIENT)
+                .registerDate(LocalDateTime.now()) // POPRAWKA: Dodano datę rejestracji
                 .build();
         userRepository.save(newUser);
 
@@ -68,16 +71,14 @@ public class AuthService
                 .address(request.getAddress())
                 .phoneNumber(request.getPhoneNumber())
                 .gender(request.getGender())
-                .registeredBy(registeredBy) // Ustawiamy pracownika, który zarejestrował pacjenta
+                .registeredBy(registeredBy)
                 .build();
 
         return patientRepository.save(newPatient);
     }
 
-
     @Transactional
-    public MedicalStaff registerDoctor(DoctorRegisterRequest request) {
-
+    public MedicalStaff registerMedicalStaff(DoctorRegisterRequest request) { // Zmieniam nazwę metody, by była zgodna z encją
 
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Użytkownik o podanym loginie (email) już istnieje.");
@@ -85,10 +86,12 @@ public class AuthService
 
 
         User newUser = User.builder()
+                .email(request.getEmail())
                 .firstName(request.getFirstName())
-                .surname(request.getPassword())
+                .surname(request.getLastName())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.ROLE_DOCTOR)
+                .registerDate(LocalDateTime.now())
                 .build();
         userRepository.save(newUser);
 
@@ -96,6 +99,7 @@ public class AuthService
         Employee newEmployee = Employee.builder()
                 .user(newUser)
                 .servicePhone(request.getOfficePhoneNumber())
+                .hireDate(LocalDate.now()) // Dodajemy datę zatrudnienia
                 .build();
         employeeRepository.save(newEmployee);
 
@@ -104,11 +108,11 @@ public class AuthService
                 .employee(newEmployee)
                 .profession(request.getSpecialization())
                 .build();
-        medicalStaffRepository.save(newMedicalStaff);
 
 
         return medicalStaffRepository.save(newMedicalStaff);
     }
+
 
 
     @Transactional

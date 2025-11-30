@@ -1,7 +1,7 @@
 package org.example.medical_clinic_management_system.security.jwt;
 
-import lombok.Value;
 import org.example.medical_clinic_management_system.model.person.User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
@@ -28,8 +28,8 @@ public class JwtUtil
 
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", user.getRole().name()); // Dodajemy rolę do claims
-        claims.put("userId", user.getId()); // Dodajemy ID użytkownika, przydatne do autoryzacji opartej na danych
+        claims.put("role", user.getRole().name());
+        claims.put("userId", user.getId());
         return createToken(claims, user.getUsername());
     }
 
@@ -66,7 +66,8 @@ public class JwtUtil
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
+
+        return Jwts.parser().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
     }
 
     private Key getSigningKey() {

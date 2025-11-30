@@ -3,7 +3,6 @@ package org.example.medical_clinic_management_system.controller.visit;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.medical_clinic_management_system.dto.visit.ExaminationRoomDetailsDto;
-import org.example.medical_clinic_management_system.dto.visit.ExaminationRoomDto;
 import org.example.medical_clinic_management_system.dto.visit.ExaminationRoomRequestDto;
 import org.example.medical_clinic_management_system.model.visit.ExaminationRoom;
 import org.example.medical_clinic_management_system.service.visit.ExaminationRoomService;
