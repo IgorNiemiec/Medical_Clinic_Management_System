@@ -85,6 +85,12 @@ public class AuthController
             @Valid @RequestBody PatientRegisterRequest request,
             @AuthenticationPrincipal User userDetails) {
 
+        if (userDetails == null)
+        {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+
         try
         {
 

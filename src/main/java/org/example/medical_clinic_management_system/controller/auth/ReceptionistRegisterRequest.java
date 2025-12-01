@@ -11,6 +11,7 @@ import lombok.Data;
 public class ReceptionistRegisterRequest
 {
 
+
     @NotBlank(message = "Email (login) jest wymagany.")
     @Email(message = "Email musi być poprawnym formatem email.")
     private String email;
@@ -24,6 +25,7 @@ public class ReceptionistRegisterRequest
 
     @NotBlank(message = "Nazwisko jest wymagane.")
     private String surname;
+
 
     @NotBlank(message = "Numer telefonu służbowego jest wymagany.")
     @Size(max = 12)

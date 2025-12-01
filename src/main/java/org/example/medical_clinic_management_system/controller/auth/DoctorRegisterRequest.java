@@ -27,11 +27,11 @@ public class DoctorRegisterRequest
     @NotBlank(message = "Nazwisko jest wymagane.")
     private String lastName;
 
-    @Size(max = 12)
-    private String officePhoneNumber;
-
     @NotNull(message = "Specjalizacja jest wymagana.")
     private MedicalStaff.Profession specialization;
+
+    @Size(max = 12)
+    private String officePhoneNumber;
 
 
 }

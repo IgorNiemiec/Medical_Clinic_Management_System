@@ -8,20 +8,26 @@ import org.example.medical_clinic_management_system.model.person.Patient;
 import org.example.medical_clinic_management_system.model.person.Receptionist;
 import org.example.medical_clinic_management_system.model.person.Role;
 import org.example.medical_clinic_management_system.model.person.User;
+import org.example.medical_clinic_management_system.security.config.SecurityConfig;
+import org.example.medical_clinic_management_system.security.details.UserDetailsServiceImplementation;
+import org.example.medical_clinic_management_system.security.jwt.JwtAuthenticationFilter;
 import org.example.medical_clinic_management_system.security.jwt.JwtUtil;
 import org.example.medical_clinic_management_system.service.auth.AuthService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -32,59 +38,45 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity; // Dodano import springSecurity()
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthController.class)
+@Import({SecurityConfig.class})
 public class AuthControllerTest
 {
 
-    @Configuration
-    public static class MockingConfig {
-        // Mockowanie serwisów używanych przez AuthController
-        @Bean
-        public AuthService authService() {
-            return mock(AuthService.class);
-        }
 
-        @Bean
-        public AuthenticationManager authenticationManager() {
-            return mock(AuthenticationManager.class);
-        }
-
-        @Bean
-        public JwtUtil jwtUtil() {
-            return mock(JwtUtil.class);
-        }
-    }
-
-
-    // Wstrzykiwanie MockMvc jest standardowe, ale nadal potrzebujemy kontekstu
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
+    @MockBean
     private AuthService authService;
 
-    @Autowired
+    @MockBean
     private AuthenticationManager authenticationManager;
 
-    @Autowired
+    @MockBean
     private JwtUtil jwtUtil;
 
-    // Pole WAC jest potrzebne do ręcznego budowania MockMvc z filtrami bezpieczeństwa
+    @MockBean
+    private UserDetailsServiceImplementation userDetailsServiceImplementation;
+
+
+
     @Autowired
     private WebApplicationContext context;
 
+
     @BeforeEach
     public void setup() {
-        // Ręczne budowanie MockMvc jest niezbędne, gdy @WebMvcTest ma problemy
-        // z poprawnym załadowaniem mapowań i filtrów bezpieczeństwa jednocześnie.
+
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(springSecurity())
@@ -96,9 +88,9 @@ public class AuthControllerTest
     void authenticateUser_Success() throws Exception {
 
         final String TEST_EMAIL = "politechnika@klinika.pl";
-        LoginRequest loginRequest = new LoginRequest(TEST_EMAIL, "politechnikaKlinika123");
+        LoginRequest loginRequest = new LoginRequest(TEST_EMAIL, "StrongPass123!");
 
-        // Konfiguracja UserDetails do zwrócenia przez AuthenticationManager
+
         User userDetails = User.builder()
                 .id(1L)
                 .email(TEST_EMAIL)
@@ -107,7 +99,7 @@ public class AuthControllerTest
         String expectedJwt = "mocked.jwt.token";
 
 
-        // Mockowanie AuthenticationManager
+
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
         when(jwtUtil.generateToken(userDetails)).thenReturn(expectedJwt);
@@ -126,19 +118,25 @@ public class AuthControllerTest
 
 
     @Test
-    @WithMockUser(roles = "RECEPTIONIST", username = "recepcjonista@klinika.pl")
     void registerPatient_AsReceptionist_Success() throws Exception {
 
-        PatientRegisterRequest request = new PatientRegisterRequest("Jan", "Kowalski", "jan@test.pl", "haslo123", "12345678901", LocalDate.of(1990, 1, 1), "Adres", "500100200", Patient.Gender.MALE);
-        Patient mockPatient = Patient.builder().id(5L).user(User.builder().email("jan@test.pl").build()).build();
+        User mockReceptionistUser = User.builder()
+                .id(99L)
+                .email("recepcjonista@klinika.pl")
+                .role(Role.ROLE_RECEPTIONIST)
+                .build();
 
+        PatientRegisterRequest request = new PatientRegisterRequest("jan@test.pl", "StrongPass123!", "Jan", "Kowalski", "12345678901", LocalDate.of(1990, 1, 1), Patient.Gender.MALE, "500100200","Adres");
+
+        User registeredUser = User.builder().email("jan@test.pl").role(Role.ROLE_PATIENT).build();
+        Patient mockPatient = Patient.builder().id(5L).user(registeredUser).build();
 
         when(authService.registerPatient(any(PatientRegisterRequest.class), any(Long.class)))
                 .thenReturn(mockPatient);
 
-
         mockMvc.perform(post("/api/auth/register/patient")
                         .with(csrf())
+                        .with(user(mockReceptionistUser))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated());
@@ -147,31 +145,39 @@ public class AuthControllerTest
 
 
     @Test
-    void registerPatient_Unauthenticated_ReturnsUnauthorized() throws Exception {
+    void registerPatient_Unauthenticated_ReturnsForbidden() throws Exception {
 
-        PatientRegisterRequest request = new PatientRegisterRequest("Jan", "Kowalski", "jan@test.pl", "haslo123", "12345678901", LocalDate.of(1990, 1, 1), "Adres", "500100200", Patient.Gender.MALE);
+        PatientRegisterRequest request = new PatientRegisterRequest("jan@test.pl", "StrongPass123!", "Jan", "Kowalski", "12345678901", LocalDate.of(1990, 1, 1), Patient.Gender.MALE, "500100200", "wodna4");
 
-        // Oczekujemy 401, ponieważ nie ma @WithMockUser
+
         mockMvc.perform(post("/api/auth/register/patient")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isForbidden());
     }
 
 
     @Test
-    @WithMockUser(roles = "RECEPTIONIST")
     void registerPatient_ServiceThrowsConflict_ReturnsBadRequest() throws Exception {
 
-        PatientRegisterRequest request = new PatientRegisterRequest("Jan", "Kowalski", "jan@test.pl", "haslo123", "12345678901", LocalDate.of(1990, 1, 1), "Adres", "500100200", Patient.Gender.MALE);
+        User mockReceptionistUser = User.builder()
+                .id(99L)
+                .email("recepcjonista@klinika.pl")
+                .role(Role.ROLE_RECEPTIONIST)
+                .build();
+
+        PatientRegisterRequest request = new PatientRegisterRequest("jan@test.pl", "StrongPass123!", "Jan", "Kowalski", "12345678901", LocalDate.of(1990, 1, 1), Patient.Gender.MALE, "500100200", "wodna4");
+
 
         when(authService.registerPatient(any(PatientRegisterRequest.class), any(Long.class)))
                 .thenThrow(new IllegalArgumentException("Użytkownik już istnieje."));
 
 
+
         mockMvc.perform(post("/api/auth/register/patient")
                         .with(csrf())
+                        .with(user(mockReceptionistUser))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -182,7 +188,7 @@ public class AuthControllerTest
     @WithMockUser(roles = "ADMIN")
     void registerMedicalStaff_AsAdmin_Success() throws Exception {
 
-        DoctorRegisterRequest request = new DoctorRegisterRequest("Anna", "Nowak", "anna@lekarz.pl", "pass2024", "111222333", MedicalStaff.Profession.NURSE);
+        DoctorRegisterRequest request = new DoctorRegisterRequest("anna@lekarz.pl", "StrongPass123!", "Anna", "Kozub",  MedicalStaff.Profession.DOCTOR,"111222333");
         MedicalStaff mockStaff = MedicalStaff.builder().id(10L).profession(MedicalStaff.Profession.NURSE).build();
 
 
@@ -202,7 +208,7 @@ public class AuthControllerTest
     @WithMockUser(roles = "RECEPTIONIST")
     void registerMedicalStaff_AsUnauthorizedUser_ReturnsForbidden() throws Exception {
 
-        DoctorRegisterRequest request = new DoctorRegisterRequest("Anna", "Nowak", "anna@lekarz.pl", "pass2024", "111222333", MedicalStaff.Profession.DOCTOR);
+        DoctorRegisterRequest request = new DoctorRegisterRequest("anna@lekarz.pl", "StrongPass123!", "Anna", "Kozub",  MedicalStaff.Profession.DOCTOR,"111222333");
 
 
         mockMvc.perform(post("/api/auth/register/medicalstaff")
@@ -218,7 +224,7 @@ public class AuthControllerTest
     @WithMockUser(roles = "ADMIN")
     void registerReceptionist_AsAdmin_Success() throws Exception {
 
-        ReceptionistRegisterRequest request = new ReceptionistRegisterRequest("Piotr", "Zając", "piotr@rejestracja.pl", "pass123", "444555666");
+        ReceptionistRegisterRequest request = new ReceptionistRegisterRequest("maciek@rejestracja.pl", "StrongPass123!", "Maciej", "Pompa", "444555666");
         Receptionist mockReceptionist = Receptionist.builder().id(12L).build();
 
 
@@ -237,7 +243,7 @@ public class AuthControllerTest
     @WithMockUser(roles = "RECEPTIONIST")
     void registerReceptionist_AsReceptionist_ReturnsForbidden() throws Exception {
 
-        ReceptionistRegisterRequest request = new ReceptionistRegisterRequest("Piotr", "Zając", "piotr@rejestracja.pl", "pass123", "444555666");
+        ReceptionistRegisterRequest request = new ReceptionistRegisterRequest("piotr@rejestracja.pl", "StrongPass123!", "Piotr", "Nowak", "636030426");
 
         mockMvc.perform(post("/api/auth/register/receptionist")
                         .with(csrf())

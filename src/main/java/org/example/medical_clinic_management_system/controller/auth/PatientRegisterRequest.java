@@ -14,20 +14,20 @@ import java.time.LocalDate;
 public class PatientRegisterRequest
 {
 
-    @NotBlank(message = "Imie jest wymagana.")
-    @Email(message = "Imie musi być poprawnym formatem")
-    private String firstName;
-
-    @NotBlank(message = "Nazwisko jest wymagane")
-    private String surname;
-
-    @NotBlank(message = "Imie jest wymagana.")
-    @Email(message = "email musi być poprawnym formatem")
+    @NotBlank(message = "Email (login) jest wymagany.")
+    @Email(message = "Email musi być poprawnym formatem email.")
     private String email;
 
     @NotBlank(message = "Hasło jest wymagane.")
     @Size(min = 8, message = "Hasło musi mieć co najmniej 8 znaków.")
     private String password;
+
+
+    @NotBlank(message = "Imię jest wymagane.")
+    private String firstName;
+
+    @NotBlank(message = "Nazwisko jest wymagane.")
+    private String surname;
 
     @NotBlank(message = "PESEL jest wymagany.")
     @Size(min = 11, max = 11, message = "PESEL musi mieć 11 cyfr.")
@@ -35,13 +35,12 @@ public class PatientRegisterRequest
 
     private LocalDate dateOfBirth;
 
-    @Size(max = 255)
-    private String address;
+    private Patient.Gender gender;
 
     @Size(max = 12)
     private String phoneNumber;
 
-    private Patient.Gender gender;
-
+    @Size(max = 255)
+    private String address;
 
 }
