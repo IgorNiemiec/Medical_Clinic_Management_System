@@ -22,35 +22,35 @@ public class DiseaseCourseController
 
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST') or hasRole('DOCTOR')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR')")
     public ResponseEntity<DiseaseCourseDetailsDto> createDiseaseCourse(@Valid @RequestBody DiseaseCourseRequestDto dto) {
         DiseaseCourseDetailsDto newCourse = diseaseCourseService.createDiseaseCourse(dto);
         return new ResponseEntity<>(newCourse, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST') or hasRole('DOCTOR')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR')")
     public ResponseEntity<DiseaseCourseDetailsDto> getDiseaseCourseById(@PathVariable Long id) {
         DiseaseCourseDetailsDto course = diseaseCourseService.getDiseaseCourseById(id);
         return ResponseEntity.ok(course);
     }
 
     @GetMapping("/history")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST') or hasRole('DOCTOR')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR')")
     public ResponseEntity<List<DiseaseCourseDetailsDto>> getHistoryByPatientCardId(@RequestParam Long patientCardId) {
         List<DiseaseCourseDetailsDto> history = diseaseCourseService.getHistoryByPatientCardId(patientCardId);
         return ResponseEntity.ok(history);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST') or hasRole('DOCTOR')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR')")
     public ResponseEntity<DiseaseCourseDetailsDto> updateDiseaseCourse(@PathVariable Long id, @Valid @RequestBody DiseaseCourseRequestDto dto) {
         DiseaseCourseDetailsDto updatedCourse = diseaseCourseService.updateDiseaseCourse(id, dto);
         return ResponseEntity.ok(updatedCourse);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST') or hasRole('DOCTOR')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR')")
     public ResponseEntity<Void> deleteDiseaseCourse(@PathVariable Long id) {
         diseaseCourseService.deleteDiseaseCourse(id);
         return ResponseEntity.noContent().build();

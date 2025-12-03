@@ -16,6 +16,6 @@ spring:
       mode: never
 
 jwt:
-  secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktcHJvZmVzc2lvbmFsLWtsaW5pa2EtdG9rZW4tc2VjcmV0LWtleS12ZXJ5LXN0cm9uZ2x5
+  secret: R3R4OVc3clhCZE9yS2pUa0ZtWnQxYmtNdkxRTVVGYk1Ua0N5UGg1c2I4V2F3c2F6Rk1xMGRhZk1YcE51Q1I=
   expiration:
     ms: 3600000

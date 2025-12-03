@@ -80,7 +80,7 @@ public class AuthController
 
 
     @PostMapping("/register/patient")
-    @PreAuthorize("hasRole('RECEPTIONIST') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_RECEPTIONIST') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Patient> registerPatient(
             @Valid @RequestBody PatientRegisterRequest request,
             @AuthenticationPrincipal User userDetails) {
@@ -98,6 +98,7 @@ public class AuthController
             return new ResponseEntity<>(newPatient, HttpStatus.CREATED);
         } catch (IllegalArgumentException e)
         {
+            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
