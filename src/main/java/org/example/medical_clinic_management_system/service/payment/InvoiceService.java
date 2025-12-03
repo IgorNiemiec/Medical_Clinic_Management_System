@@ -21,6 +21,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,11 +44,24 @@ public class InvoiceService
         Patient patient = patientRepository.findById(requestDto.getPatientId())
                 .orElseThrow(() -> new RuntimeException("Pacjent (Nabywca)"));
 
+        List<Long> requestedServiceIds = requestDto.getAppointmentMedicalServiceIds();
+
         List<AppointmentMedicalService> items = amsRepository.findAllById(requestDto.getAppointmentMedicalServiceIds());
 
-        if (items.size() != requestDto.getAppointmentMedicalServiceIds().size()) {
-            throw new RuntimeException("Jedna lub więcej wybranych pozycji rozliczeniowych nie istnieje.");
+
+        if (items.size() != requestedServiceIds.size()) {
+            Set<Long> foundIds = items.stream()
+                    .map(AppointmentMedicalService::getId)
+                    .collect(Collectors.toSet());
+
+            List<Long> missingIds = requestedServiceIds.stream()
+                    .filter(id -> !foundIds.contains(id))
+                    .toList();
+
+            throw new RuntimeException("Jedna lub więcej wybranych pozycji rozliczeniowych nie istnieje. Brakujące ID: " + missingIds);
         }
+
+
 
 
         boolean alreadyInvoiced = items.stream().anyMatch(ams -> ams.getInvoice() != null);

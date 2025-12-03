@@ -27,6 +27,7 @@ public class DrugRequestDto
 
     @NotBlank(message = "{validation.drug.gtinNumber.notBlank}")
     @Pattern(regexp = "^\\d{14}$", message = "{validation.drug.gtinNumber.pattern}")
+    @Size(min = 14, max = 14, message = "{validation.drug.gtinNumber.size}")
     private String gtinNumber;
 
     private boolean isActive = true;

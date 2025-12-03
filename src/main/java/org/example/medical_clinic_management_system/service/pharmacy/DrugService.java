@@ -50,6 +50,14 @@ public class DrugService
     }
 
     @Transactional
+    public DrugDetailsDto getDrugByAtcCode(String atcCode) {
+        Drug drug = drugRepository.findByAtcCode(atcCode)
+                .orElseThrow(() -> new RuntimeException("Drug not found with ATC Code: " + atcCode));
+
+        return drugMapper.toDetailsDto(drug);
+    }
+
+    @Transactional
     public List<DrugDetailsDto> getAllDrugs() {
         List<Drug> drugs = drugRepository.findAll();
 

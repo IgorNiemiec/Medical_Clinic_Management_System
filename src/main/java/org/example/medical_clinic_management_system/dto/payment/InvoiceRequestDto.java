@@ -15,7 +15,6 @@ public class InvoiceRequestDto
 
     @NotEmpty(message = "{validation.invoice.appointmentMedicalServiceIds.notEmpty}")
     @NotNull(message = "{validation.invoice.appointmentMedicalServiceId.notNull}")
-    @Min(value = 1, message = "{validation.invoice.appointmentMedicalServiceId.min}")
     private List<Long> appointmentMedicalServiceIds;
 
     @NotBlank(message = "{validation.invoice.payerName.notBlank}")

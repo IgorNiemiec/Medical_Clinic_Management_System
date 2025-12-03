@@ -41,6 +41,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImplementation userDetailsService;
 
+    private static final String ROLE_PREFIX = "ROLE_";
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -48,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
         final String authHeader = request.getHeader("Authorization") != null ?
                 request.getHeader("Authorization").trim() :
                 null;
-        String jwt; // Zmienione na nie-final
+        String jwt;
         final String userEmail;
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -61,13 +63,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
             return;
         }
 
-        // KLUCZOWA POPRAWKA EKSTRAKCJI:
-        // 1. Odcinamy "Bearer "
-        // 2. Trim() usuwa spacje z obu końców
-        // 3. ReplaceAll usuwa *wszystkie* wewnętrzne białe znaki, w tym te, które mogły zostać na początku tokena
         jwt = authHeader.substring(7).trim().replaceAll("\\s", "");
 
-        // Zostawiamy loggera do celów diagnostycznych:
+
         if (jwt.isEmpty()) {
             filterChain.doFilter(request, response);
             return;
@@ -75,7 +73,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
 
         try {
 
-            // LOGOWANIE OTRZYMANEGO TOKENA W CUDZYSŁOWACH
+
             logger.info("Przygotowany token do parsowania (w cudzysłowach, bez spacji): \"{}\"", jwt);
 
             Claims claims = jwtUtil.extractAllClaims(jwt);
@@ -96,7 +94,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
                     if (authoritiesList != null && !authoritiesList.isEmpty()) {
 
                         authorities = authoritiesList.stream()
-                                .map(SimpleGrantedAuthority::new)
+                                .map(role -> {
+                                    String authority = role.toUpperCase();
+                                    if (!authority.startsWith(ROLE_PREFIX)) {
+                                        authority = ROLE_PREFIX + authority;
+                                    }
+                                    return new SimpleGrantedAuthority(authority);
+                                })
                                 .collect(Collectors.toList());
 
                         logger.info("JWT uwierzytelnione. Wczytane uprawnienia: {}", authorities.stream()
@@ -126,7 +130,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
             response.getWriter().write("JWT error: Token wygasł. Zaloguj się ponownie.");
             return;
         } catch (MalformedJwtException | SignatureException e) {
-            // Ten wyjątek z dużym prawdopodobieństwem jest wywoływany przez zły klucz
+
             logger.error("JWT Signature/Malformed error for request to {}: {}", request.getRequestURI(), e.getMessage());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("JWT error: Niepoprawny podpis klucza lub struktura tokena. Proszę upewnić się, że serwer został ZRESTARTOWANY po zmianie klucza tajnego.");
